@@ -8,3 +8,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "NotionTodo"
 include ':app'
+include ':notionlib'
