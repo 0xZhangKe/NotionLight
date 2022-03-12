@@ -1,39 +1,52 @@
 package com.zhangke.notionlib.auth
 
+import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
-import android.webkit.WebView
-import androidx.appcompat.app.AppCompatActivity
+import android.util.Log
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.activity.ComponentActivity
 
-class AuthorizationActivity: AppCompatActivity() {
+class AuthorizationActivity : ComponentActivity() {
+
+    private lateinit var textView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val webView = createWebView()
-        setContentView(webView)
-        webView.loadData(buildContent(), null, null)
+        textView = TextView(this)
+        textView.layoutParams = ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        textView.setPadding(30, 30, 30, 30)
+        setContentView(textView)
+        intent?.let { handleIntent(it) }
     }
 
-    private fun buildContent(): String{
-        return """<a href="${buildAuthUrl()}">Add to Notion</a>"""
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        intent?.let { handleIntent(it) }
     }
 
-    /**
-     * <a href="https://api.notion.com/v1/oauth/authorize?owner=user&client_id=463558a3-725e-4f37-b6d3-0889894f68de
-     * &redirect_uri=https%3A%2F%2Fexample.com%2Fauth%2Fnotion%2Fcallback
-     * &response_type=code">Add to Notion</a>
-     */
-    private fun buildAuthUrl(): String{
-        val authUrlBuilder = StringBuilder()
-        authUrlBuilder.append("https://api.notion.com/v1/oauth/authorize")
-        authUrlBuilder.append("?owner=user")
-        authUrlBuilder.append("&client_id=200bca3a-ff25-437e-82dc-2dfd7fc1f1f3")
-        authUrlBuilder.append("&response_type=code")
-        authUrlBuilder.append("&redirect_uri=https%3A%2F%2F0xzhangke.github.io%2F")
-        return authUrlBuilder.toString()
+    @SuppressLint("SetTextI18n")
+    private fun handleIntent(intent: Intent){
+        val data = intent.data
+        if(data == null){
+            Log.d("B_TEST", "data is null")
+            return
+        }
+        val code = data.query?.replaceFirst("code=", "")
+        if(code == null) {
+            textView.text = "${textView.text}\nerror."
+        }else{
+            startAuthWithCode(code)
+        }
     }
 
-    private fun createWebView(): WebView{
-        val webView = WebView(this)
-        return webView
+    @SuppressLint("SetTextI18n")
+    private fun startAuthWithCode(code: String){
+        textView.text = "${textView.text}\nauthing..."
+
     }
 }
