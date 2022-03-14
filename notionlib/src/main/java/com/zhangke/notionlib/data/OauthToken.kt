@@ -22,5 +22,5 @@ data class OauthToken(
     @SerializedName("bot_id")
     val botId: String,
 
-    val owner: String,
+    val owner: Owner,
 )

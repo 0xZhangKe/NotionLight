@@ -1,6 +1,9 @@
 package com.zhangke.notionlib
 
+import com.zhangke.notionlib.auth.NotionTodoIntegrationConfig
 import com.zhangke.notionlib.data.OauthToken
+import okhttp3.RequestBody
+import retrofit2.http.Body
 import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.POST
@@ -10,7 +13,7 @@ import retrofit2.http.POST
  */
 interface NotionApi {
 
-    @Headers("Content-Type: application/json")
+    @Headers("Authorization: ${NotionTodoIntegrationConfig.AUTHORIZATION}")
     @POST("/v1/oauth/token")
-    suspend fun getOauthToken(@Header("Authorization") authorization: String): OauthToken
+    suspend fun getOauthToken(@Body body: RequestBody): OauthToken
 }

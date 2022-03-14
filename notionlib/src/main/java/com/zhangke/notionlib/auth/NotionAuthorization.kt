@@ -3,10 +3,22 @@ package com.zhangke.notionlib.auth
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
+import com.zhangke.notionlib.NotionRepo
+import com.zhangke.notionlib.data.OauthToken
+import kotlinx.coroutines.*
 
 object NotionAuthorization {
 
-    private const val REDIRECT_URL = "https://notionauth.zhangkenotion.net/auth"
+    private const val TAG = "NotionAuthorization"
+
+    const val REDIRECT_URL = "https://notionauth.zhangkenotion.net/auth"
+
+    suspend fun getOauthToken(): OauthToken? {
+        return withContext(Dispatchers.IO) {
+            NotionRepo.getLocalOauthToken()
+        }
+    }
 
     fun startAuth(activity: Activity) {
         val url = buildAuthUrl()
@@ -27,5 +39,28 @@ object NotionAuthorization {
         authUrlBuilder.append("&response_type=code")
         authUrlBuilder.append("&redirect_uri=$REDIRECT_URL")
         return authUrlBuilder.toString()
+    }
+
+    fun handleResultForOauth(intent: Intent): Boolean {
+        val data = intent.data
+        if (data == null) {
+            Log.d(TAG, "data is null")
+            return false
+        }
+        val code = data.getQueryParameter("code")
+        Log.d(TAG, "code=${code}")
+        if (code == null) {
+            return false
+        }
+        GlobalScope.launch { requestOauthToken(code) }
+        return true
+    }
+
+    private suspend fun requestOauthToken(code: String): OauthToken {
+        return withContext(Dispatchers.IO) {
+            val token = NotionRepo.requestOathToken(code)
+            NotionRepo.saveOauthToken(token)
+            token
+        }
     }
 }

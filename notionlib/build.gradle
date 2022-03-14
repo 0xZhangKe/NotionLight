@@ -71,6 +71,7 @@ dependencies {
     implementation support.'core-ktx'
     implementation support.collection
     implementation support.'collection-ktx'
+    implementation support.datastore
     implementation support.'datastore-preferences'
 
     implementation kotlin_libs.stdlib
