@@ -7,6 +7,9 @@ import android.util.Log
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.activity.ComponentActivity
+import androidx.lifecycle.lifecycleScope
+import com.zhangke.notionlib.NotionRepo
+import kotlinx.coroutines.launch
 
 class AuthorizationActivity : ComponentActivity() {
 
@@ -30,23 +33,34 @@ class AuthorizationActivity : ComponentActivity() {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun handleIntent(intent: Intent){
+    private fun handleIntent(intent: Intent) {
         val data = intent.data
-        if(data == null){
+        if (data == null) {
             Log.d("B_TEST", "data is null")
             return
         }
         val code = data.query?.replaceFirst("code=", "")
-        if(code == null) {
+        Log.d("B_TEST", "code=${code}")
+        if (code == null) {
             textView.text = "${textView.text}\nerror."
-        }else{
+        } else {
+            textView.text = "${textView.text}\ncode=$code"
             startAuthWithCode(code)
         }
     }
 
     @SuppressLint("SetTextI18n")
-    private fun startAuthWithCode(code: String){
+    private fun startAuthWithCode(code: String) {
         textView.text = "${textView.text}\nauthing..."
-
+        lifecycleScope.launch {
+            try {
+                val token = NotionRepo.getOauthToken(code)
+                println(token)
+                textView.text = "${textView.text}\n$token"
+            } catch (e: Exception) {
+                e.printStackTrace()
+                textView.text = "${textView.text}\n${e.message}\n${e.stackTraceToString()}"
+            }
+        }
     }
 }

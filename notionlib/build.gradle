@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    compileSdk 31
+    compileSdk rootProject.ext.compileSdkVersion
 
     defaultConfig {
-        minSdk 21
-        targetSdk 31
+        minSdk rootProject.ext.minSdkVersion
+        targetSdk rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
 
@@ -71,6 +71,7 @@ dependencies {
     implementation support.'core-ktx'
     implementation support.collection
     implementation support.'collection-ktx'
+    implementation support.'datastore-preferences'
 
     implementation kotlin_libs.stdlib
     implementation coroutine.core
