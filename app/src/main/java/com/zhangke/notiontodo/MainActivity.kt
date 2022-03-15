@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
-import com.zhangke.framework.utils.sharedGson
+import com.zhangke.notionlib.NotionRepo
 import com.zhangke.notionlib.auth.NotionAuthorization
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,7 +24,21 @@ class MainActivity : AppCompatActivity() {
                 updateContent("no-oauth")
             }
         }
-        findViewById<View>(R.id.button).setOnClickListener { NotionAuthorization.startAuth(this) }
+        findViewById<View>(R.id.oauth).setOnClickListener { NotionAuthorization.startAuth() }
+        findViewById<View>(R.id.query).setOnClickListener {
+            lifecycleScope.launch {
+                val pages = withContext(Dispatchers.IO) {
+                    NotionRepo.queryAllPages()
+                }
+                val builder = StringBuilder()
+                pages.forEach {
+                    builder.appendLine(
+                        it.properties?.title?.title?.firstOrNull()?.plainText ?: "null"
+                    )
+                }
+                updateContent(builder.toString())
+            }
+        }
     }
 
     private suspend fun updateContent(text: String) = withContext(Dispatchers.Main) {

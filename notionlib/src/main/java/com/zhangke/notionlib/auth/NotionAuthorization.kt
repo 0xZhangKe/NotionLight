@@ -1,9 +1,9 @@
 package com.zhangke.notionlib.auth
 
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import com.zhangke.framework.utils.appContext
 import com.zhangke.notionlib.NotionRepo
 import com.zhangke.notionlib.data.OauthToken
 import kotlinx.coroutines.*
@@ -20,15 +20,17 @@ object NotionAuthorization {
         }
     }
 
-    fun startAuth(activity: Activity) {
+    fun startAuth() {
         val url = buildAuthUrl()
-        openUrlWithBrowse(url, activity)
+        openUrlWithBrowse(url)
     }
 
-    private fun openUrlWithBrowse(url: String, activity: Activity) {
+    private fun openUrlWithBrowse(url: String) {
         val uri = Uri.parse(url)
-        val intent = Intent(Intent.ACTION_VIEW, uri)
-        activity.startActivity(intent)
+        val intent = Intent(Intent.ACTION_VIEW, uri).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        appContext.startActivity(intent)
     }
 
     private fun buildAuthUrl(): String {

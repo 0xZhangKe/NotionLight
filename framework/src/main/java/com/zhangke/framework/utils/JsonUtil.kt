@@ -8,7 +8,7 @@ import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
 import java.lang.reflect.Type
 
-val sharedGson: Gson = Gson()
+val sharedGson: Gson = GsonInstance.globalGson
 
 /**
  * 解析[this]为[type]类型。非法值会导致[JsonSyntaxException]。

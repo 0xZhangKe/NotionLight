@@ -1,11 +1,12 @@
 package com.zhangke.architect.network
 
+import com.zhangke.framework.utils.sharedGson
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 fun newRetrofit(baseUrl: String): Retrofit =
     Retrofit.Builder()
         .baseUrl(baseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
+        .addConverterFactory(GsonConverterFactory.create(sharedGson))
         .client(GlobalOkHttpClient.client)
         .build()
