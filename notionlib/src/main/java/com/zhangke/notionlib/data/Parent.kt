@@ -1,7 +1,7 @@
 package com.zhangke.notionlib.data
 
 import com.google.gson.annotations.SerializedName
-import com.zhangke.framework.utils.EnumWithJsonValue
+import com.zhangke.framework.utils.JsonEnum
 
 data class Parent(
 
@@ -19,7 +19,7 @@ data class Parent(
     val workspace: Boolean = true,
 ) {
 
-    enum class Type(override val value: String) : EnumWithJsonValue<String> {
+    enum class Type(override val value: String) : JsonEnum<String> {
 
         DATABASE("database_id"),
 

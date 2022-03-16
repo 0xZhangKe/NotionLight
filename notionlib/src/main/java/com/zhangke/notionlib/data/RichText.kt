@@ -1,7 +1,7 @@
 package com.zhangke.notionlib.data
 
 import com.google.gson.annotations.SerializedName
-import com.zhangke.framework.utils.EnumWithJsonValue
+import com.zhangke.framework.utils.JsonEnum
 
 data class RichText(
 
@@ -19,7 +19,7 @@ data class RichText(
     val text: Text?,
 ) {
 
-    enum class Type(override val value: String) : EnumWithJsonValue<String> {
+    enum class Type(override val value: String) : JsonEnum<String> {
 
         TEXT("text"),
 
