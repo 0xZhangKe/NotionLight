@@ -1,7 +1,9 @@
 package com.zhangke.architect.network
 
 import android.annotation.SuppressLint
+import android.util.Log
 import com.zhangke.framework.utils.ifDebugging
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import java.security.KeyStore
@@ -9,12 +11,17 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.*
 
-
 object GlobalOkHttpClient {
 
     private const val TIMEOUT = 30L
 
-    val client: OkHttpClient = createBuilder().build()
+    val client: OkHttpClient by lazy { createBuilder().build() }
+
+    private val thirdPartInterceptors = mutableListOf<Interceptor>()
+
+    fun addThirdPartInterceptor(interceptor: Interceptor) {
+        thirdPartInterceptors += interceptor
+    }
 
     private fun createBuilder(): OkHttpClient.Builder {
         val ssl = buildSSLFactory()
@@ -29,6 +36,10 @@ object GlobalOkHttpClient {
                 HttpLoggingInterceptor(HttpLoggingInterceptor.Logger.DEFAULT)
                     .setLevel(HttpLoggingInterceptor.Level.BODY)
             )
+        }
+        thirdPartInterceptors.forEach {
+            Log.d("GlobalOkHttpClient", "add $it")
+            builder.addInterceptor(it)
         }
         return builder
     }

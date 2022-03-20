@@ -8,5 +8,6 @@ fun newRetrofit(baseUrl: String): Retrofit =
     Retrofit.Builder()
         .baseUrl(baseUrl)
         .addConverterFactory(GsonConverterFactory.create(sharedGson))
+        .addCallAdapterFactory(ResponseCallAdapterFactory())
         .client(GlobalOkHttpClient.client)
         .build()
