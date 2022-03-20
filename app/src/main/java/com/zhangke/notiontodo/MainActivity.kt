@@ -2,8 +2,10 @@ package com.zhangke.notiontodo
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.zhangke.notionlib.NotionRepo
 import com.zhangke.notionlib.auth.NotionAuthorization
@@ -27,16 +29,23 @@ class MainActivity : AppCompatActivity() {
         findViewById<View>(R.id.oauth).setOnClickListener { NotionAuthorization.startAuth() }
         findViewById<View>(R.id.query).setOnClickListener {
             lifecycleScope.launch {
-                val pages = withContext(Dispatchers.IO) {
-                    NotionRepo.queryAllPages()
+                val pages = try {
+                    withContext(Dispatchers.IO) {
+                        NotionRepo.queryAllPages()
+                    }
+                } catch (e: Exception) {
+                    Toast.makeText(this@MainActivity, e.message, Toast.LENGTH_SHORT).show()
+                    null
                 }
-                val builder = StringBuilder()
-                pages.forEach {
-                    builder.appendLine(
-                        it.properties?.title?.title?.firstOrNull()?.plainText ?: "null"
-                    )
+                if (pages != null) {
+                    val builder = StringBuilder()
+                    pages.forEach {
+                        builder.appendLine(
+                            it.properties?.title?.title?.firstOrNull()?.plainText ?: "null"
+                        )
+                    }
+                    updateContent(builder.toString())
                 }
-                updateContent(builder.toString())
             }
         }
     }

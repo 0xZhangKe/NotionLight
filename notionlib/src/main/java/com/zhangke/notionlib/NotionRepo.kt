@@ -3,10 +3,7 @@ package com.zhangke.notionlib
 import com.zhangke.architect.network.newRetrofit
 import com.zhangke.framework.utils.*
 import com.zhangke.notionlib.auth.NotionAuthorization
-import com.zhangke.notionlib.data.NotionListEntry
-import com.zhangke.notionlib.data.NotionPage
-import com.zhangke.notionlib.data.OauthToken
-import com.zhangke.notionlib.data.Parent
+import com.zhangke.notionlib.data.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 
@@ -30,7 +27,7 @@ object NotionRepo {
         appContext.dataStore.putString(OAUTH_TOKEN_KEY, json)
     }
 
-    suspend fun requestOathToken(code: String): OauthToken {
+    suspend fun requestOathToken(code: String): NotionResponse<OauthToken> {
         val json = json {
             "grant_type" kv "authorization_code"
             "code" kv code
@@ -45,17 +42,22 @@ object NotionRepo {
         var startCursor: String? = null
         val pageList = mutableListOf<NotionPage>()
         while (hasMore) {
-            val entry = queryPages(startCursor)
-            entry.results?.let { list ->
-                pageList += list.filter { it.parent?.type != Parent.Type.DATABASE }
+            val response = queryPages(startCursor)
+            response.onSuccess { data ->
+                data.results?.let { list ->
+                    pageList += list.filter { it.parent?.type != Parent.Type.DATABASE }
+                }
+                startCursor = data.nextCursor
+                hasMore = data.hasMore
             }
-            startCursor = entry.nextCursor
-            hasMore = entry.hasMore
+            response.onError {
+                throw RuntimeException(it.message)
+            }
         }
         return pageList
     }
 
-    private suspend fun queryPages(startCursor: String? = null): NotionListEntry<NotionPage> {
+    private suspend fun queryPages(startCursor: String? = null): NotionResponse<NotionListEntry<NotionPage>> {
         val json = json {
             "start_cursor" kvNotNull startCursor
             "page_size" kv 100
@@ -65,15 +67,10 @@ object NotionRepo {
             }
         }.toString()
         val body = json.toRequestBody("application/json".toMediaType())
-        return notionApi.queryAllPages(requireAccessToken(), body)
+        return notionApi.queryAllPages(body)
     }
 
-    private suspend fun requireAccessToken(): String {
-        val token = NotionAuthorization.getOauthToken()?.accessToken
-        if (token.isNullOrEmpty()) {
-            NotionAuthorization.startAuth()
-            throw NoOauthException()
-        }
-        return "Bearer $token"
+    suspend fun queryBlock(blockId: String, startCursor: String? = null): NotionResponse<NotionListEntry<NotionBlock>>{
+        return notionApi.queryBlock(blockId, 100, startCursor)
     }
 }

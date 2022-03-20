@@ -4,8 +4,10 @@ import android.content.Intent
 import android.net.Uri
 import android.util.Log
 import com.zhangke.framework.utils.appContext
+import com.zhangke.framework.utils.toast
 import com.zhangke.notionlib.NotionRepo
 import com.zhangke.notionlib.data.OauthToken
+import io.reactivex.rxjava3.subjects.SingleSubject
 import kotlinx.coroutines.*
 
 object NotionAuthorization {
@@ -14,10 +16,20 @@ object NotionAuthorization {
 
     const val REDIRECT_URL = "https://notionauth.zhangkenotion.net/auth"
 
-    suspend fun getOauthToken(): OauthToken? {
-        return withContext(Dispatchers.IO) {
-            NotionRepo.getLocalOauthToken()
+    private var token: OauthToken? = null
+    val readTokenSubject: SingleSubject<Boolean> = SingleSubject.create()
+
+    fun start() {
+        GlobalScope.launch {
+            withContext(Dispatchers.IO) {
+                token = NotionRepo.getLocalOauthToken()
+                readTokenSubject.onSuccess(true)
+            }
         }
+    }
+
+    fun getOauthToken(): OauthToken? {
+        return token
     }
 
     fun startAuth() {
@@ -58,11 +70,15 @@ object NotionAuthorization {
         return true
     }
 
-    private suspend fun requestOauthToken(code: String): OauthToken {
-        return withContext(Dispatchers.IO) {
-            val token = NotionRepo.requestOathToken(code)
-            NotionRepo.saveOauthToken(token)
-            token
+    private suspend fun requestOauthToken(code: String) {
+        withContext(Dispatchers.IO) {
+            val response = NotionRepo.requestOathToken(code)
+            response.onSuccess {
+                NotionRepo.saveOauthToken(it)
+            }
+            response.onError {
+                toast(it.message)
+            }
         }
     }
 }

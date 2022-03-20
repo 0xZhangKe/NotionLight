@@ -80,4 +80,6 @@ dependencies {
 
     implementation thirdparty.retrofit
     implementation thirdparty.gson
+    implementation thirdparty.rxjava3
+    implementation thirdparty.rxandroid3
 }
