@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
                 updateContent("no-oauth")
             }
         }
-        findViewById<View>(R.id.oauth).setOnClickListener { NotionAuthorization.startAuth() }
+        findViewById<View>(R.id.oauth).setOnClickListener { NotionAuthorization.showAuthPage() }
         findViewById<View>(R.id.query).setOnClickListener {
             lifecycleScope.launch {
                 val pages = try {

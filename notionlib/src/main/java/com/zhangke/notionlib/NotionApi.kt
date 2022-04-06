@@ -37,7 +37,6 @@ interface NotionApi {
         @Query("start_cursor") startCursor: String?
     ): NotionResponse<NotionListEntry<NotionBlock>>
 
-    //https://api.notion.com/v1/blocks/46639d99-0e99-49db-ba2b-6cb89c0db597/children
     @PATCH("v1/blocks/{block_id}/children")
     suspend fun appendBlock(@Body body: RequestBody): NotionResponse<NotionListEntry<NotionBlock>>
 }

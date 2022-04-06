@@ -32,6 +32,13 @@ object NotionAuthorization {
         return token
     }
 
+    fun showAuthPage() {
+        val intent = Intent(appContext, AuthorizationActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        appContext.startActivity(intent)
+    }
+
     fun startAuth() {
         val url = buildAuthUrl()
         openUrlWithBrowse(url)

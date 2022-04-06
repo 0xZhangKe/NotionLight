@@ -50,9 +50,6 @@ object NotionRepo {
                 startCursor = data.nextCursor
                 hasMore = data.hasMore
             }
-            response.onError {
-                throw RuntimeException(it.message)
-            }
         }
         return pageList
     }

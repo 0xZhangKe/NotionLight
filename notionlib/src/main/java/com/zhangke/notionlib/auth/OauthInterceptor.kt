@@ -7,6 +7,7 @@ import com.zhangke.notionlib.NotionApi
 import com.zhangke.notionlib.data.ErrorEntry
 import okhttp3.Interceptor
 import okhttp3.Response
+import java.io.IOException
 
 class OauthInterceptor : Interceptor {
 
@@ -33,7 +34,7 @@ class OauthInterceptor : Interceptor {
             } catch (e: Exception) {
                 Log.e("OauthInterceptor", "intercept", e)
             }
-            NotionAuthorization.startAuth()
+            NotionAuthorization.showAuthPage()
             throw NotOauthException(errorEntry)
         }
         return response
@@ -45,11 +46,11 @@ class OauthInterceptor : Interceptor {
             .blockingGet()
             ?.accessToken
         if (token.isNullOrEmpty()) {
-            NotionAuthorization.startAuth()
+            NotionAuthorization.showAuthPage()
             throw NoOauthException()
         }
         return "Bearer $token"
     }
 }
 
-class NotOauthException(errorEntry: ErrorEntry?) : RuntimeException(errorEntry?.message)
+class NotOauthException(errorEntry: ErrorEntry?) : IOException(errorEntry?.message)
