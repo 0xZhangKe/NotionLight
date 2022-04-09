@@ -1,14 +1,14 @@
-package com.zhangke.notiontodo
+package com.zhangke.notiontodo.main
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.zhangke.notionlib.NotionRepo
 import com.zhangke.notionlib.auth.NotionAuthorization
+import com.zhangke.notiontodo.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

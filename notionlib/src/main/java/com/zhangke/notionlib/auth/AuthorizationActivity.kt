@@ -81,7 +81,7 @@ class AuthorizationActivity : ComponentActivity() {
 //                finish()
 //            }
 
-            var show by remember { mutableStateOf(true) }
+            var show by remember { mutableStateOf(false) }
             AnimatedVisibility(
                 modifier = Modifier
                     .padding(top = screenDp.toDp().dp)
