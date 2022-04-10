@@ -1,26 +1,25 @@
 package com.zhangke.notionlib.auth
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -29,7 +28,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zhangke.framework.utils.toDp
 import com.zhangke.notionlib.R
-import kotlinx.coroutines.CoroutineScope
 
 /**
  * 发起授权流程，并存储授权数据
@@ -46,6 +44,7 @@ class AuthorizationActivity : ComponentActivity() {
                 AuthorizationScreen(vm = viewModel)
             }
         }
+        intent?.let { handleIntent(it) }
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -170,7 +169,7 @@ class AuthorizationActivity : ComponentActivity() {
                 modifier = Modifier.size(130.dp),
                 strokeWidth = 6.dp
             )
-            val hint = vm.authProccessInto.observeAsState()
+            val hint = vm.authProcessInfo.observeAsState()
             if (!hint.value.isNullOrEmpty()) {
                 AnimatedContent(targetState = hint.value.orEmpty()) { targetHint ->
                     Text(
@@ -191,11 +190,11 @@ class AuthorizationActivity : ComponentActivity() {
         ) {
             Icon(
                 modifier = Modifier.size(80.dp),
-                painter = painterResource(id = R.drawable.notion_lib_error),
+                painter = rememberVectorPainter(Icons.Filled.Error),
                 contentDescription = null,
                 tint = Color.DarkGray,
             )
-            val hint = vm.authProccessInto.value
+            val hint = vm.authProcessInfo.value
             if (!hint.isNullOrEmpty()) {
                 Text(
                     modifier = Modifier.offset(y = 10.dp),

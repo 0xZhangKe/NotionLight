@@ -29,33 +29,33 @@ data class NotionBlockInPage(
 interface NotionPageConfigDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insetConfig(config: NotionPageConfig)
+    suspend fun insetConfig(config: NotionPageConfig)
 
     @Query("SELECT * FROM $CONFIG_TABLE_NAME")
     fun queryAllConfig(): Flow<List<NotionPageConfig>>
 
     @Delete
-    fun deletePage(config: NotionPageConfig)
+    suspend fun deletePage(config: NotionPageConfig)
 }
 
 @Dao
 interface NotionBlockInPageDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insetCache(block: NotionBlockInPage)
+    suspend fun insetBlock(block: NotionBlockInPage)
 
-    @Query("SELECT * FROM $BLOCK_TABLE_NAME")
-    fun queryAllConfig(): Flow<List<NotionBlockInPage>>
+    @Query("SELECT * FROM $BLOCK_TABLE_NAME WHERE pageId == :pageId")
+    fun queryBlockWithPageId(pageId: String): Flow<List<NotionBlockInPage>>
 
-    @Delete
-    fun deletePage(block: NotionBlockInPage)
+    @Query("DELETE FROM $BLOCK_TABLE_NAME WHERE pageId == :pageId")
+    suspend fun deletePageAllBlock(pageId: String)
 }
 
 @TypeConverters(NotionPageRoomConverters::class)
-@Database(entities = [NotionPageConfig::class], version = DB_VERSION)
+@Database(entities = [NotionPageConfig::class, NotionBlockInPage::class], version = DB_VERSION)
 abstract class NotionPageDataBase : RoomDatabase() {
 
-    abstract fun pageConfigDao(): NotionPageConfig
+    abstract fun pageConfigDao(): NotionPageConfigDao
 
     abstract fun blockInPageDao(): NotionBlockInPageDao
 

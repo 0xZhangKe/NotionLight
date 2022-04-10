@@ -49,6 +49,20 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
+    implementation compose.material3
+    implementation compose.compiler
+    implementation compose.ui
+    implementation compose.'ui-tooling'
+    implementation compose.'ui-util'
+    implementation compose.'ui-viewbinding'
+    implementation compose.runtime
+    implementation compose.material
+    implementation compose.'material-icons-core'
+    implementation compose.'material-icons-extended'
+    implementation compose.foundation
+    implementation compose.'foundation-layout'
+    implementation compose.'runtime-livedata'
+    
     implementation support.appcompat
     implementation support.material
     implementation support.'activity-compose'
@@ -61,8 +75,22 @@ dependencies {
     implementation support.'room-ktx'
     kapt           support.'room-compiler'
 
+    implementation arch.lifecycle.'viewmodel-ktx'
+    implementation arch.lifecycle.'viewmodel-compose'
+    implementation arch.lifecycle.'livedata-ktx'
+    implementation arch.lifecycle.'viewmodel-savedstate'
+    kapt           arch.lifecycle.compiler
+    implementation arch.lifecycle.'common-java8'
+    implementation arch.lifecycle.process
+    implementation arch.lifecycle.'reactivestreams-ktx'
+
     implementation kotlin_libs.stdlib
     implementation coroutine.core
     implementation coroutine.android
+
+    implementation thirdparty.retrofit
+    implementation thirdparty.gson
+    implementation thirdparty.rxjava3
+    implementation thirdparty.rxandroid3
 
 }

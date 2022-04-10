@@ -10,6 +10,7 @@
         <activity
             android:name=".auth.AuthorizationActivity"
             android:exported="true"
+            android:launchMode="singleTask"
             android:theme="@android:style/Theme.Translucent.NoTitleBar">
 
             <intent-filter>

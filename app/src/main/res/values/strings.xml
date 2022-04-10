@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">NotionTodo</string>
+
+    <string name="add_page_guid">暂无内容，请添加</string>
 </resources>
