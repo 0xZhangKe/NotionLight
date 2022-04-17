@@ -9,7 +9,7 @@ object NotionPageConfigRepo {
     /**
      * insert or update
      */
-    suspend fun insertPageConfig(config: NotionPageConfig) {
+    suspend fun insertPageConfig(config: List<NotionPageConfig>) {
         NotionPageDataBase.instance
             .pageConfigDao()
             .insetConfig(config)
@@ -27,10 +27,10 @@ object NotionPageConfigRepo {
             .deletePage(config)
     }
 
-    suspend fun insetBlock(pageId: String, block: NotionBlock) {
+    suspend fun insetBlocks(pageId: String, block: List<NotionBlock>) {
         NotionPageDataBase.instance
             .blockInPageDao()
-            .insetBlock(NotionBlockInPage(pageId, block))
+            .insetBlocks(block.map { NotionBlockInPage(it.id, pageId, it) })
     }
 
     suspend fun getBlockWithPageId(id: String): Flow<List<NotionBlock>> {

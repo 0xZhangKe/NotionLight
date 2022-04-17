@@ -105,6 +105,7 @@ class ResponseCall<S, E : ErrorResponse.ErrorEntryWithMessage>(
             override fun onResponse(call: Call<S>, response: retrofit2.Response<S>) {
                 if (response.isSuccessful) {
                     val body = response.body()
+                    responseInstance.success = true
                     responseInstance.successData = body
                 } else {
                     val error = response.errorBody()
@@ -119,12 +120,14 @@ class ResponseCall<S, E : ErrorResponse.ErrorEntryWithMessage>(
                             }
                         }
                     }
+                    responseInstance.success = false
                     responseInstance.errorData = ErrorResponse.ApiError(errorBody, response.code())
                 }
                 callback.onResponse(this@ResponseCall, retrofit2.Response.success(responseInstance))
             }
 
             override fun onFailure(p0: Call<S>, p1: Throwable) {
+                responseInstance.success = false
                 responseInstance.errorData = ErrorResponse.NetworkError(p1)
                 callback.onResponse(this@ResponseCall, retrofit2.Response.success(responseInstance))
             }

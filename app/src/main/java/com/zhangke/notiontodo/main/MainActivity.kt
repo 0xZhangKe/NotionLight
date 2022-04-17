@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -14,20 +15,19 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.asLiveData
 import com.zhangke.framework.utils.toast
+import com.zhangke.notionlib.data.NotionBlock
+import com.zhangke.notionlib.ext.getSimpleText
 import com.zhangke.notiontodo.R
+import com.zhangke.notiontodo.addpage.AddPageActivity
 import com.zhangke.notiontodo.config.NotionPageConfig
-import kotlinx.coroutines.flow.asSharedFlow
 
 class MainActivity : AppCompatActivity() {
 
@@ -81,15 +81,18 @@ class MainActivity : AppCompatActivity() {
             if (pageConfigList.isNullOrEmpty()) {
                 EmptyBlockPage()
             } else {
-                ToolbarTab(items = pageConfigList)
+                ToolbarTab(items = pageConfigList, vm)
             }
         }
     }
 
     @Composable
-    fun ToolbarTab(items: List<NotionPageConfig>) {
+    fun ToolbarTab(items: List<NotionPageConfig>, vm: MainViewModel) {
         var tabIndex by remember { mutableStateOf(0) }
-        Column {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             ScrollableTabRow(
                 selectedTabIndex = tabIndex,
                 edgePadding = 0.dp,
@@ -98,9 +101,7 @@ class MainActivity : AppCompatActivity() {
                         Modifier.tabIndicatorOffset(tabPositions[tabIndex])
                     )
                 },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp),
+                modifier = Modifier.height(48.dp),
             ) {
                 items.forEachIndexed { index, item ->
                     Tab(
@@ -112,8 +113,35 @@ class MainActivity : AppCompatActivity() {
                     ) {
                         Text(
                             text = item.title,
+                            modifier = Modifier.padding(10.dp, 0.dp, 10.dp, 0.dp)
                         )
                     }
+                }
+            }
+            val list = vm.getPageBlockList(items[tabIndex].id).collectAsState().value
+            PageContent(blockList = list)
+        }
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    fun PageContent(blockList: List<NotionBlock>?) {
+        if (blockList.isNullOrEmpty()) return
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            items(blockList.size) { index ->
+                val item = blockList[index]
+                Surface(
+                    shadowElevation = 5.dp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(15.dp, 7.dp, 15.dp, 7.dp)
+                ) {
+                    Text(
+                        modifier = Modifier.padding(13.dp, 13.dp, 13.dp, 13.dp),
+                        text = item.childrenBlock?.getSimpleText().orEmpty()
+                    )
                 }
             }
         }
@@ -128,7 +156,7 @@ class MainActivity : AppCompatActivity() {
                     enabled = true,
                     role = Role.Button,
                 ) {
-                    toast("add")
+                    AddPageActivity.open(this)
                 },
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,

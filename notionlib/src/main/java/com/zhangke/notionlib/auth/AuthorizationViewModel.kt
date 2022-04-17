@@ -42,16 +42,16 @@ class AuthorizationViewModel : ViewModel() {
 
         authProcessInfo.value = appContext.getString(R.string.notion_lib_auth_waiting_api)
 
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                val response = NotionRepo.requestOathToken(code)
-                response.onSuccess {
-                    NotionRepo.saveOauthToken(it)
-                    authState.value = 2
-                }
-                response.onError {
-                    onAuthFailed(it.message)
-                }
+        viewModelScope.launch(Dispatchers.Main) {
+            val response = withContext(Dispatchers.IO) {
+                NotionRepo.requestOathToken(code)
+            }
+            response.onSuccess {
+                NotionRepo.saveOauthToken(it)
+                authState.value = 2
+            }
+            response.onError {
+                onAuthFailed(it.message)
             }
         }
     }

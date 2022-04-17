@@ -1,4 +1,4 @@
-package com.zhangke.framework.utils
+package com.zhangke.architect.datastore
 
 import android.content.Context
 import androidx.datastore.core.DataStore

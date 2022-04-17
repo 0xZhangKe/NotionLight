@@ -1,5 +1,8 @@
 package com.zhangke.notionlib
 
+import com.zhangke.architect.datastore.dataStore
+import com.zhangke.architect.datastore.getString
+import com.zhangke.architect.datastore.putString
 import com.zhangke.architect.network.newRetrofit
 import com.zhangke.framework.utils.*
 import com.zhangke.notionlib.auth.NotionAuthorization
@@ -38,20 +41,7 @@ object NotionRepo {
     }
 
     suspend fun queryAllPages(): List<NotionPage> {
-        var hasMore = true
-        var startCursor: String? = null
-        val pageList = mutableListOf<NotionPage>()
-        while (hasMore) {
-            val response = queryPages(startCursor)
-            response.onSuccess { data ->
-                data.results?.let { list ->
-                    pageList += list.filter { it.parent?.type != Parent.Type.DATABASE }
-                }
-                startCursor = data.nextCursor
-                hasMore = data.hasMore
-            }
-        }
-        return pageList
+        return loadAllPage { queryPages(it) }
     }
 
     private suspend fun queryPages(startCursor: String? = null): NotionResponse<NotionListEntry<NotionPage>> {
@@ -67,7 +57,36 @@ object NotionRepo {
         return notionApi.queryAllPages(body)
     }
 
-    suspend fun queryBlock(blockId: String, startCursor: String? = null): NotionResponse<NotionListEntry<NotionBlock>>{
+    suspend fun queryAllBlocks(blockId: String): List<NotionBlock> {
+        return loadAllPage { startCursor ->
+            queryBlock(blockId, startCursor)
+        }
+    }
+
+    suspend fun queryBlock(
+        blockId: String,
+        startCursor: String? = null
+    ): NotionResponse<NotionListEntry<NotionBlock>> {
         return notionApi.queryBlock(blockId, 100, startCursor)
+    }
+
+    private inline fun <T> loadAllPage(loader: (String?) -> NotionResponse<NotionListEntry<T>>): List<T> {
+        var hasMore = true
+        var startCursor: String? = null
+        val pageList = mutableListOf<T>()
+        while (hasMore) {
+            val response = loader(startCursor)
+            response.onSuccess { data ->
+                data.results?.let { list ->
+                    pageList.addAll(list)
+                }
+                startCursor = data.nextCursor
+                hasMore = data.hasMore
+            }
+            response.onError {
+                hasMore = false
+            }
+        }
+        return pageList
     }
 }

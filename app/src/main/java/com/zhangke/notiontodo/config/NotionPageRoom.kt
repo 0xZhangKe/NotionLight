@@ -21,12 +21,16 @@ data class NotionPageConfig(
 
 @Entity(tableName = BLOCK_TABLE_NAME)
 data class NotionBlockInPage(
-    @PrimaryKey val pageId: String,
+    @PrimaryKey val id: String,
+    val pageId: String,
     val notionBlock: NotionBlock,
 )
 
 @Dao
 interface NotionPageConfigDao {
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insetConfig(config: List<NotionPageConfig>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insetConfig(config: NotionPageConfig)
@@ -42,7 +46,7 @@ interface NotionPageConfigDao {
 interface NotionBlockInPageDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insetBlock(block: NotionBlockInPage)
+    suspend fun insetBlocks(block: List<NotionBlockInPage>)
 
     @Query("SELECT * FROM $BLOCK_TABLE_NAME WHERE pageId == :pageId")
     fun queryBlockWithPageId(pageId: String): Flow<List<NotionBlockInPage>>

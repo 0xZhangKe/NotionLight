@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName
 import com.zhangke.framework.utils.json
 import com.zhangke.framework.utils.sharedGson
 import com.zhangke.framework.utils.toJsonTree
-import com.zhangke.notionlib.data.block.ChildrenBlock
+import com.zhangke.notionlib.data.block.*
 import java.lang.reflect.Type
 
 @JsonAdapter(NotionBlockTypeAdapter::class)
@@ -36,10 +36,22 @@ data class NotionBlock(
     @SerializedName("has_children")
     val hasChildren: Boolean = true,
 
-    val childrenBlock: ChildrenBlock? = null
+    val childrenBlock: TypedBlock? = null
 )
 
 class NotionBlockTypeAdapter : JsonSerializer<NotionBlock>, JsonDeserializer<NotionBlock> {
+
+    private val typedClassMap = mutableMapOf<String, Class<out TypedBlock>>()
+
+    init {
+        typedClassMap["to_do"] = TodoBlock::class.java
+        typedClassMap["paragraph"] = ParagraphBlock::class.java
+        typedClassMap["heading_1"] = HeadingBlock::class.java
+        typedClassMap["heading_2"] = HeadingBlock::class.java
+        typedClassMap["heading_3"] = HeadingBlock::class.java
+        typedClassMap["callout"] = CalloutBlock::class.java
+        typedClassMap["quote"] = QuoteBlock::class.java
+    }
 
     override fun serialize(
         src: NotionBlock?,
@@ -70,11 +82,18 @@ class NotionBlockTypeAdapter : JsonSerializer<NotionBlock>, JsonDeserializer<Not
     ): NotionBlock {
         val json = jsonElement.asJsonObject
         val type = json.get("type").asString
-        var childrenBlock: ChildrenBlock? = null
-        val childrenBlockJson = json.get(type)
-        if (childrenBlockJson != null) {
-            childrenBlock = sharedGson.fromJson(childrenBlockJson, ChildrenBlock::class.java)
+
+        var content: TypedBlock? = null
+        val contentJson = json.get(type)
+        if (contentJson != null) {
+            val clazz = typedClassMap[type]
+            content = if (clazz != null) {
+                sharedGson.fromJson(contentJson, clazz)
+            } else {
+                UndefinedBlock(contentJson.asJsonObject)
+            }
         }
+
         val createdBy = json.get("created_by")?.let {
             sharedGson.fromJson(it, User::class.java)
         }
@@ -91,7 +110,7 @@ class NotionBlockTypeAdapter : JsonSerializer<NotionBlock>, JsonDeserializer<Not
             lastEditedBy = lastEditBy,
             archived = json.get("archived")?.asBoolean ?: false,
             hasChildren = json.get("has_children")?.asBoolean ?: true,
-            childrenBlock = childrenBlock
+            childrenBlock = content
         )
     }
 }

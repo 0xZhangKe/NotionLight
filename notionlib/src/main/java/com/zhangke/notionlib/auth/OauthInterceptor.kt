@@ -1,8 +1,8 @@
 package com.zhangke.notionlib.auth
 
 import android.util.Log
+import com.zhangke.framework.utils.Optional
 import com.zhangke.framework.utils.sharedGson
-import com.zhangke.notionlib.NoOauthException
 import com.zhangke.notionlib.NotionApi
 import com.zhangke.notionlib.data.ErrorEntry
 import okhttp3.Interceptor
@@ -16,7 +16,7 @@ class OauthInterceptor : Interceptor {
         request = if (request.header(NotionApi.OAUTH_HEADER_TAG) == null) {
             val token = requireAccessToken()
             request.newBuilder()
-                .addHeader("Authorization", "Bearer $token")
+                .addHeader("Authorization", token)
                 .build()
         } else {
             request.newBuilder()
@@ -42,12 +42,13 @@ class OauthInterceptor : Interceptor {
 
     private fun requireAccessToken(): String {
         val token = NotionAuthorization.readTokenSubject
-            .map { NotionAuthorization.getOauthToken() }
+            .map { Optional.of(NotionAuthorization.getOauthToken()) }
             .blockingGet()
+            ?.getOrNull()
             ?.accessToken
         if (token.isNullOrEmpty()) {
             NotionAuthorization.showAuthPage()
-            throw NoOauthException()
+            throw NotOauthException(null)
         }
         return "Bearer $token"
     }

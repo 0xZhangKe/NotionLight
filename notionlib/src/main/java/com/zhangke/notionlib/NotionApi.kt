@@ -30,7 +30,7 @@ interface NotionApi {
     suspend fun queryAllPages(@Body body: RequestBody): NotionResponse<NotionListEntry<NotionPage>>
 
     @Headers("Accept: application/json", "Notion-Version: 2022-02-22")
-    @GET("v1/search/{block_id}/children")
+    @GET("v1/blocks/{block_id}/children")
     suspend fun queryBlock(
         @Path("block_id") blockId: String,
         @Query("page_size") pageSize: Int,

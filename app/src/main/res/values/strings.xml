@@ -2,4 +2,10 @@
     <string name="app_name">NotionTodo</string>
 
     <string name="add_page_guid">暂无内容，请添加</string>
+
+    <string name="add_page_title">添加页面</string>
+
+    <string name="page_add_success">添加成功</string>
+
+    <string name="loading">加载中…</string>
 </resources>

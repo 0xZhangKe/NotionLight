@@ -75,12 +75,7 @@ class AuthorizationActivity : ComponentActivity() {
 
             var toastShown by remember { mutableStateOf(false) }
 
-//            var exit by remember { mutableStateOf(false) }
-//            val yOffset by animateIntAsState(targetValue = if (exit) 500 else 0) {
-//                finish()
-//            }
-
-            var show by remember { mutableStateOf(false) }
+            var show by remember { mutableStateOf(true) }
             AnimatedVisibility(
                 modifier = Modifier
                     .padding(top = screenDp.toDp().dp)

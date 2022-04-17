@@ -9,7 +9,7 @@ import java.lang.reflect.Type
 
 @JsonAdapter(ChildrenBlockTypeAdapter::class)
 data class ChildrenBlock(
-    val type: String,
+    val type: String?,
     val content: TypedBlock?
 )
 
@@ -37,7 +37,7 @@ class ChildrenBlockTypeAdapter : JsonSerializer<ChildrenBlock>, JsonDeserializer
         }
         return json {
             "type" kv src.type
-            src.type kvNotNull src.content.toJsonTree()
+            src.type?.let { it kvNotNull src.content.toJsonTree() }
         }
     }
 
@@ -47,7 +47,7 @@ class ChildrenBlockTypeAdapter : JsonSerializer<ChildrenBlock>, JsonDeserializer
         p2: JsonDeserializationContext?
     ): ChildrenBlock {
         val json = jsonElement.asJsonObject
-        val type = json.get("type").asString
+        val type = json.get("type")?.asString
         var content: TypedBlock? = null
         val contentJson = json.get(type)
         if (contentJson != null) {

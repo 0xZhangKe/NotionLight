@@ -10,7 +10,7 @@ class NotionPageRoomConverters {
     fun toNotionPageType(value: String): NotionPageType = enumValueOf(value)
 
     @TypeConverter
-    fun fromNotionPageType(value: NotionPageType): String = value.value
+    fun fromNotionPageType(value: NotionPageType): String = value.name
 
     @TypeConverter
     fun toNotionBlock(value: String): NotionBlock {
