@@ -15,16 +15,24 @@
             android:name=".main.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.Material3.Light.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <activity
             android:name=".addpage.AddPageActivity"
             android:exported="true"
             android:theme="@style/Theme.Material3.Light.NoActionBar" />
+
+        <activity
+            android:name=".addblock.AddBlockActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
     </application>
 
 </manifest>
