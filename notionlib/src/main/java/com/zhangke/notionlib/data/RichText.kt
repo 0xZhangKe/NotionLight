@@ -8,7 +8,7 @@ data class RichText(
     @SerializedName("plain_text")
     val plainText: String?,
 
-    val href: String?,
+    val href: String? = null,
 
     val annotations: TextAnnotations,
 
@@ -16,7 +16,7 @@ data class RichText(
     @SerializedName("type")
     val type: Type = Type.TEXT,
 
-    val text: Text?,
+    val text: Text? = null,
 ) {
 
     enum class Type(override val value: String) : JsonEnum<String> {
@@ -30,7 +30,7 @@ data class RichText(
 
     data class Text(
         val content: String,
-        val link: Link,
+        val link: Link? = null,
     )
 
     data class Link(

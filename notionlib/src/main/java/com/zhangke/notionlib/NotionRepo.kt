@@ -1,18 +1,17 @@
 package com.zhangke.notionlib
 
-import com.zhangke.architect.datastore.dataStore
-import com.zhangke.architect.datastore.getString
-import com.zhangke.architect.datastore.putString
+import com.google.gson.JsonObject
 import com.zhangke.architect.network.newRetrofit
-import com.zhangke.framework.utils.*
 import com.zhangke.notionlib.auth.NotionAuthorization
-import com.zhangke.notionlib.data.*
+import com.zhangke.notionlib.data.NotionBlock
+import com.zhangke.notionlib.data.NotionListEntry
+import com.zhangke.notionlib.data.NotionPage
+import com.zhangke.notionlib.data.OauthToken
+import com.zhangke.notionlib.utils.BlockBuildHelper
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 
 object NotionRepo {
-
-    private const val OAUTH_TOKEN_KEY = "oauth_token"
 
     private val notionApi: NotionApi by lazy {
         newRetrofit("https://api.notion.com").create(
@@ -20,24 +19,24 @@ object NotionRepo {
         )
     }
 
-    suspend fun getLocalOauthToken(): OauthToken? {
-        val oauthTokenJson = appContext.dataStore.getString(OAUTH_TOKEN_KEY) ?: return null
-        return sharedGson.fromJson(oauthTokenJson, OauthToken::class.java)
-    }
-
-    suspend fun saveOauthToken(token: OauthToken) {
-        val json = sharedGson.toJson(token)
-        appContext.dataStore.putString(OAUTH_TOKEN_KEY, json)
-    }
-
     suspend fun requestOathToken(code: String): NotionResponse<OauthToken> {
-        val json = json {
-            "grant_type" kv "authorization_code"
-            "code" kv code
-            "redirect_uri" kv NotionAuthorization.REDIRECT_URL
+        val json = JsonObject().apply {
+            addProperty("grant_type", "authorization_code")
+            addProperty("code", code)
+            addProperty("redirect_uri", NotionAuthorization.REDIRECT_URL)
         }.toString()
         val body = json.toRequestBody("application/json".toMediaType())
         return notionApi.getOauthToken(body)
+    }
+
+    suspend fun appendBlock(
+        content: String,
+        pageId: String,
+        type: String
+    ): NotionResponse<NotionListEntry<NotionBlock>> {
+        val json = BlockBuildHelper.build(type, content).toString()
+        val body = json.toRequestBody("application/json".toMediaType())
+        return notionApi.appendBlock(pageId, body)
     }
 
     suspend fun queryAllPages(): List<NotionPage> {
@@ -45,13 +44,14 @@ object NotionRepo {
     }
 
     private suspend fun queryPages(startCursor: String? = null): NotionResponse<NotionListEntry<NotionPage>> {
-        val json = json {
-            "start_cursor" kvNotNull startCursor
-            "page_size" kv 100
-            "filter" kv json {
-                "property" kv "object"
-                "value" kv "page"
+        val json = JsonObject().apply {
+            addProperty("start_cursor", startCursor)
+            addProperty("page_size", 100)
+            val filter = JsonObject().apply {
+                addProperty("property", "object")
+                addProperty("value", "page")
             }
+            add("filter", filter)
         }.toString()
         val body = json.toRequestBody("application/json".toMediaType())
         return notionApi.queryAllPages(body)

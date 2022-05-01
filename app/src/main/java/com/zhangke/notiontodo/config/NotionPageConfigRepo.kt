@@ -39,6 +39,7 @@ object NotionPageConfigRepo {
             .queryBlockWithPageId(id)
             .map {
                 it.map { item -> item.notionBlock }
+                    .sortedByDescending { item -> item.lastEditedDate?.time ?: 0 }
             }
     }
 

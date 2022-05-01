@@ -25,25 +25,31 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
 import com.zhangke.framework.utils.toast
 import com.zhangke.notionlib.data.NotionPage
+import com.zhangke.notionlib.data.block.BlockType
 import com.zhangke.notionlib.ext.getSimpleText
 import com.zhangke.notiontodo.R
 import com.zhangke.notiontodo.composable.PageLoading
 import com.zhangke.notiontodo.config.NotionPageConfig
-import com.zhangke.notiontodo.config.NotionPageType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class AddPageActivity : ComponentActivity() {
 
+    private val vm: AddPageViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val vm: AddPageViewModel by viewModels()
         setContent {
             MaterialTheme {
                 PageScreen(vm)
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        vm.loadPage()
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
@@ -141,7 +147,7 @@ class AddPageActivity : ComponentActivity() {
         return NotionPageConfig(
             id = id,
             title = getTitle(),
-            type = NotionPageType.CALLOUT
+            type = BlockType.CALLOUT
         )
     }
 

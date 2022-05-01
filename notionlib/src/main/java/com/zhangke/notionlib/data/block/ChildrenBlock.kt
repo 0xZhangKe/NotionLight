@@ -2,7 +2,7 @@ package com.zhangke.notionlib.data.block
 
 import com.google.gson.*
 import com.google.gson.annotations.JsonAdapter
-import com.zhangke.framework.utils.json
+import com.zhangke.framework.utils.addNotNull
 import com.zhangke.framework.utils.sharedGson
 import com.zhangke.framework.utils.toJsonTree
 import java.lang.reflect.Type
@@ -35,9 +35,9 @@ class ChildrenBlockTypeAdapter : JsonSerializer<ChildrenBlock>, JsonDeserializer
         if (src == null) {
             return JsonNull.INSTANCE
         }
-        return json {
-            "type" kv src.type
-            src.type?.let { it kvNotNull src.content.toJsonTree() }
+        return JsonObject().apply {
+            addProperty("type", src.type)
+            src.type?.let { addNotNull(it, src.content.toJsonTree()) }
         }
     }
 

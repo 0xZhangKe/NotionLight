@@ -4,7 +4,14 @@ enum class NotionPageType(val value: String) {
 
     TODO("todo"),
 
-    TEXT("text"),
+    PARAGRAPH("paragraph"),
 
     CALLOUT("callout"),
+
+    ;
+
+    companion object {
+
+        val all = listOf(TODO, PARAGRAPH, CALLOUT)
+    }
 }

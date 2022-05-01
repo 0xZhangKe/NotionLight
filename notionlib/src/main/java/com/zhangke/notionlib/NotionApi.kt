@@ -37,6 +37,10 @@ interface NotionApi {
         @Query("start_cursor") startCursor: String?
     ): NotionResponse<NotionListEntry<NotionBlock>>
 
+    @Headers("Accept: application/json", "Notion-Version: 2022-02-22")
     @PATCH("v1/blocks/{block_id}/children")
-    suspend fun appendBlock(@Body body: RequestBody): NotionResponse<NotionListEntry<NotionBlock>>
+    suspend fun appendBlock(
+        @Path("block_id") blockId: String,
+        @Body body: RequestBody
+    ): NotionResponse<NotionListEntry<NotionBlock>>
 }

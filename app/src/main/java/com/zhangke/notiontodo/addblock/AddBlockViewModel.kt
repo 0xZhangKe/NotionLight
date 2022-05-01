@@ -4,6 +4,10 @@ import android.content.Intent
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.zhangke.framework.utils.toast
+import com.zhangke.notionlib.NotionRepo
+import com.zhangke.notionlib.data.block.BlockType
+import com.zhangke.notiontodo.R
 import com.zhangke.notiontodo.config.NotionPageConfig
 import com.zhangke.notiontodo.config.NotionPageConfigRepo
 import kotlinx.coroutines.flow.catch
@@ -15,14 +19,24 @@ class AddBlockViewModel : ViewModel() {
     val currentPage = MutableLiveData<NotionPageConfig?>()
     val currentBlockType = MutableLiveData<String?>()
 
-    private var targetPageName: String? = null
+    val currentInputText = MutableLiveData<String>()
+
+    val blockTypeList = listOf(
+        BlockType.CALLOUT,
+        BlockType.PARAGRAPH,
+        BlockType.TODO
+    )
+
+    var onAddSuccess: (() -> Unit)? = null
+
+    private var targetPageId: String? = null
         set(value) {
             field = value
             findTargetPage()
         }
 
-    private var pageList: List<NotionPageConfig>? = null
-        set(value) {
+    var pageList: List<NotionPageConfig>? = null
+        private set(value) {
             field = value
             findTargetPage()
         }
@@ -36,19 +50,38 @@ class AddBlockViewModel : ViewModel() {
     }
 
     fun parseIntent(intent: Intent) {
-        targetPageName = intent.getStringExtra(AddBlockActivity.INTENT_ARG_PAGE)
+        targetPageId = intent.getStringExtra(AddBlockActivity.INTENT_ARG_PAGE)
+    }
+
+    fun saveContent() {
+        val pageId = currentPage.value?.id ?: return
+        val blockType = currentBlockType.value ?: return
+        val inputtedText = currentInputText.value
+        if (inputtedText.isNullOrEmpty()) {
+            toast(R.string.input_empty)
+            return
+        }
+        viewModelScope.launch {
+            val response = NotionRepo.appendBlock(inputtedText, pageId, blockType)
+            response.onSuccess {
+                onAddSuccess?.invoke()
+            }
+            response.onError {
+                toast(it.message)
+            }
+        }
     }
 
     private fun findTargetPage() {
         val pageList = pageList ?: return
         currentPage.value =
             pageList.firstOrNull {
-                if (targetPageName.isNullOrEmpty()) {
+                if (targetPageId.isNullOrEmpty()) {
                     true
                 } else {
-                    it.title == targetPageName
+                    it.id == targetPageId
                 }
             }
-        currentBlockType.value = currentPage.value?.type?.value
+        currentBlockType.value = currentPage.value?.type
     }
 }

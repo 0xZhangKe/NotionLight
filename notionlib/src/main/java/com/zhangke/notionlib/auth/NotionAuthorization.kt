@@ -2,13 +2,19 @@ package com.zhangke.notionlib.auth
 
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
+import com.zhangke.architect.datastore.dataStore
+import com.zhangke.architect.datastore.getString
+import com.zhangke.architect.datastore.putString
 import com.zhangke.framework.utils.appContext
+import com.zhangke.framework.utils.sharedGson
 import com.zhangke.framework.utils.toast
 import com.zhangke.notionlib.NotionRepo
 import com.zhangke.notionlib.data.OauthToken
 import io.reactivex.rxjava3.subjects.SingleSubject
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 object NotionAuthorization {
 
@@ -17,19 +23,29 @@ object NotionAuthorization {
     const val REDIRECT_URL = "https://notionauth.zhangkenotion.net/auth"
 
     private var token: OauthToken? = null
+
     val readTokenSubject: SingleSubject<Boolean> = SingleSubject.create()
 
+    private const val OAUTH_TOKEN_KEY = "oauth_token"
+
     fun start() {
-        GlobalScope.launch {
-            withContext(Dispatchers.IO) {
-                token = NotionRepo.getLocalOauthToken()
-                readTokenSubject.onSuccess(true)
+        GlobalScope.launch(Dispatchers.IO) {
+            val oauthTokenJson = appContext.dataStore.getString(OAUTH_TOKEN_KEY)
+            if (!oauthTokenJson.isNullOrEmpty()) {
+                token = sharedGson.fromJson(oauthTokenJson, OauthToken::class.java)
             }
+            readTokenSubject.onSuccess(true)
         }
     }
 
     fun getOauthToken(): OauthToken? {
         return token
+    }
+
+    private suspend fun saveOauthToken(token: OauthToken) {
+        this.token = token
+        val json = sharedGson.toJson(token)
+        appContext.dataStore.putString(OAUTH_TOKEN_KEY, json)
     }
 
     fun showAuthPage() {
@@ -62,29 +78,21 @@ object NotionAuthorization {
         return authUrlBuilder.toString()
     }
 
-    fun handleResultForOauth(intent: Intent): Boolean {
-        val data = intent.data
-        if (data == null) {
-            Log.d(TAG, "data is null")
-            return false
-        }
-        val code = data.getQueryParameter("code")
-        Log.d(TAG, "code=${code}")
-        if (code == null) {
-            return false
-        }
-        GlobalScope.launch { requestOauthToken(code) }
-        return true
-    }
-
-    private suspend fun requestOauthToken(code: String) {
+    suspend fun startRequestOauthToken(code: String, oauthResult: (String?) -> Unit) {
         withContext(Dispatchers.IO) {
             val response = NotionRepo.requestOathToken(code)
             response.onSuccess {
-                NotionRepo.saveOauthToken(it)
+                saveOauthToken(it)
+                withContext(Dispatchers.Main) {
+                    oauthResult(null)
+                }
             }
+
             response.onError {
                 toast(it.message)
+                withContext(Dispatchers.Main) {
+                    oauthResult(it.message)
+                }
             }
         }
     }

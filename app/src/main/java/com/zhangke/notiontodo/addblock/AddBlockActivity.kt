@@ -1,5 +1,7 @@
 package com.zhangke.notiontodo.addblock
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -8,13 +10,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.SelectAll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -29,6 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zhangke.framework.utils.StatusBarUtils
+import com.zhangke.framework.utils.toast
 import com.zhangke.notiontodo.R
 
 class AddBlockActivity : ComponentActivity() {
@@ -36,6 +35,13 @@ class AddBlockActivity : ComponentActivity() {
     companion object {
 
         const val INTENT_ARG_PAGE = "arg_page"
+
+        fun open(activity: Activity, pageId: String? = null) {
+            Intent(activity, AddBlockActivity::class.java).let {
+                it.putExtra(INTENT_ARG_PAGE, pageId)
+                activity.startActivity(it)
+            }
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,12 +52,16 @@ class AddBlockActivity : ComponentActivity() {
                 PageScreen(vm = vm)
             }
         }
+        vm.parseIntent(intent)
+        vm.onAddSuccess = {
+            toast(R.string.add_block_success)
+            finish()
+        }
     }
 
     @Composable
     fun PageScreen(vm: AddBlockViewModel) {
         val statusBarHeight = StatusBarUtils.getStatusBarHeight()
-        var inputtedText by remember { mutableStateOf("") }
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -81,21 +91,38 @@ class AddBlockActivity : ComponentActivity() {
                     ) {
                         Text(text = getString(R.string.add_block_item_page_type))
                         Spacer(modifier = Modifier.weight(1F))
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.clickable {
 
+                        var pageTypeExpanded by remember { mutableStateOf(false) }
+
+                        Column {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.clickable {
+                                    pageTypeExpanded = true
+                                }
+                            ) {
+                                val pageConfig = vm.currentPage.observeAsState()
+                                pageConfig.value?.title?.let {
+                                    Text(text = it)
+                                }
+                                Icon(
+                                    modifier = Modifier.padding(start = 3.dp),
+                                    painter = rememberVectorPainter(image = Icons.Filled.ArrowDropDown),
+                                    contentDescription = "Select other"
+                                )
                             }
-                        ) {
-                            val pageConfig = vm.currentPage.observeAsState()
-                            pageConfig.value?.title?.let {
-                                Text(text = it)
+                            DropdownMenu(
+                                expanded = pageTypeExpanded,
+                                onDismissRequest = { pageTypeExpanded = false }) {
+                                vm.pageList?.forEach {
+                                    DropdownMenuItem(onClick = {
+                                        pageTypeExpanded = false
+                                        vm.currentPage.value = it
+                                    }) {
+                                        Text(text = it.title)
+                                    }
+                                }
                             }
-                            Icon(
-                                modifier = Modifier.padding(start = 3.dp),
-                                painter = rememberVectorPainter(image = Icons.Filled.ArrowDropDown),
-                                contentDescription = "Select other"
-                            )
                         }
                     }
 
@@ -106,28 +133,46 @@ class AddBlockActivity : ComponentActivity() {
                     ) {
                         Text(text = getString(R.string.add_block_item_block_type))
                         Spacer(modifier = Modifier.weight(1F))
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.clickable {
 
+                        var blockTypeExpanded by remember { mutableStateOf(false) }
+                        Column {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.clickable {
+                                    blockTypeExpanded = true
+                                }
+                            ) {
+                                val blockType = vm.currentBlockType.observeAsState()
+                                blockType.value?.let {
+                                    Text(text = it)
+                                }
+                                Icon(
+                                    modifier = Modifier.padding(start = 3.dp),
+                                    painter = rememberVectorPainter(image = Icons.Filled.ArrowDropDown),
+                                    contentDescription = "Select other"
+                                )
                             }
-                        ) {
-                            val blockType = vm.currentBlockType.observeAsState()
-                            blockType.value?.let {
-                                Text(text = it)
+                            DropdownMenu(
+                                expanded = blockTypeExpanded,
+                                onDismissRequest = { blockTypeExpanded = false }) {
+                                vm.blockTypeList.forEach {
+                                    DropdownMenuItem(onClick = {
+                                        blockTypeExpanded = false
+                                        vm.currentBlockType.value = it
+                                    }) {
+                                        Text(text = it)
+                                    }
+                                }
                             }
-                            Icon(
-                                modifier = Modifier.padding(start = 3.dp),
-                                painter = rememberVectorPainter(image = Icons.Filled.ArrowDropDown),
-                                contentDescription = "Select other"
-                            )
                         }
                     }
 
+                    val inputtedText = vm.currentInputText.observeAsState("")
+
                     TextField(
-                        value = inputtedText,
+                        value = inputtedText.value,
                         shape = RoundedCornerShape(6.dp),
-                        onValueChange = { inputtedText = it },
+                        onValueChange = { vm.currentInputText.value = it },
                         colors = TextFieldDefaults.textFieldColors(
                             backgroundColor = Color(0x99CCCCCC),
                             focusedIndicatorColor = Color.Transparent,
@@ -167,7 +212,7 @@ class AddBlockActivity : ComponentActivity() {
                     shape = RoundedCornerShape(30.dp),
                     colors = ButtonDefaults.buttonColors(Color.White),
                     onClick = {
-
+                        vm.saveContent()
                     }
                 ) {
                     Text(

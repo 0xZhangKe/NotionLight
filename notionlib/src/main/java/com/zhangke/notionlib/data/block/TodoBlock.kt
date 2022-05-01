@@ -13,4 +13,9 @@ data class TodoBlock(
     val checked: Boolean,
 
     val children: List<ChildrenBlock>?
-) : TypedBlock
+) : TypedBlock {
+
+    companion object {
+        const val TYPE = BlockType.TODO
+    }
+}

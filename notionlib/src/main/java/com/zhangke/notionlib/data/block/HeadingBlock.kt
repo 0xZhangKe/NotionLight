@@ -9,4 +9,14 @@ data class HeadingBlock(
     val richText: List<RichText>,
 
     val color: String = "default"
-): TypedBlock
+) : TypedBlock {
+
+    companion object {
+
+        const val TYPE_1 = BlockType.HEADING_1
+
+        const val TYPE_2 = BlockType.HEADING_2
+
+        const val TYPE_3 = BlockType.HEADING_3
+    }
+}

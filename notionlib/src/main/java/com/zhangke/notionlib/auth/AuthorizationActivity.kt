@@ -2,7 +2,6 @@ package com.zhangke.notionlib.auth
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -20,14 +19,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.lifecycleScope
 import com.zhangke.framework.utils.toDp
+import com.zhangke.framework.utils.toast
 import com.zhangke.notionlib.R
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 /**
  * 发起授权流程，并存储授权数据
@@ -73,9 +75,16 @@ class AuthorizationActivity : ComponentActivity() {
 
             val screenDp = resources.displayMetrics.heightPixels * 0.3F
 
-            var toastShown by remember { mutableStateOf(false) }
-
-            var show by remember { mutableStateOf(true) }
+            val hide by vm.authSuccess.observeAsState(false)
+            if (hide) {
+                SideEffect {
+                    toast(R.string.notion_lib_auth_success)
+                    lifecycleScope.launch {
+                        delay(200)
+                        this@AuthorizationActivity.finish()
+                    }
+                }
+            }
             AnimatedVisibility(
                 modifier = Modifier
                     .padding(top = screenDp.toDp().dp)
@@ -83,7 +92,7 @@ class AuthorizationActivity : ComponentActivity() {
                         Color.White,
                         shape = RoundedCornerShape(30.dp, 30.dp, 0.dp, 0.dp)
                     ),
-                visible = show,
+                visible = !hide,
                 enter = slideInVertically(
                     animationSpec = tween(durationMillis = 150, easing = LinearOutSlowInEasing),
                     initialOffsetY = { fullHeight ->
@@ -105,28 +114,11 @@ class AuthorizationActivity : ComponentActivity() {
                     textAlign = TextAlign.Center
                 )
 
-                var cachedState by remember { mutableStateOf(0) }
                 val authState by vm.authState.observeAsState()
                 when (authState) {
-                    2 -> {
-                        if (!toastShown) {
-                            Toast.makeText(
-                                this@AuthorizationActivity,
-                                R.string.notion_lib_auth_success,
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            toastShown = true
-                            show = false
-                        }
-                    }
-                    else -> {
-                        cachedState = authState ?: 0
-                    }
-                }
-                when (cachedState) {
                     0 -> WaitForUserClick(vm)
                     1 -> Loading(vm)
-                    3 -> ShowAuthError(vm)
+                    2 -> ShowAuthError(vm)
                 }
             }
         }

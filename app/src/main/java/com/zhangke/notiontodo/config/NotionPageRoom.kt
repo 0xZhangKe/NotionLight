@@ -16,7 +16,7 @@ private const val BLOCK_TABLE_NAME = "notion_page_block"
 data class NotionPageConfig(
     @PrimaryKey val id: String,
     val title: String,
-    val type: NotionPageType,
+    val type: String,
 )
 
 @Entity(tableName = BLOCK_TABLE_NAME)

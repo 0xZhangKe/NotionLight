@@ -17,7 +17,8 @@ class AddPageViewModel : ViewModel() {
     val notionPageList = MutableStateFlow<List<NotionPage>?>(emptyList())
     val loading = MutableLiveData(true)
 
-    init {
+    fun loadPage() {
+        loading.value = true
         viewModelScope.launch(Dispatchers.IO) {
             notionPageList.emit(NotionRepo.queryAllPages())
             withContext(Dispatchers.Main) {

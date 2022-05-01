@@ -11,7 +11,12 @@ data class CalloutBlock(
 
     val color: String = "default",
 
-    val icon: NotionFile,
+    val icon: NotionFile? = null,
 
-    val children: List<ChildrenBlock>?
-) : TypedBlock
+    val children: List<ChildrenBlock>? = null
+) : TypedBlock {
+
+    companion object {
+        const val TYPE = BlockType.CALLOUT
+    }
+}

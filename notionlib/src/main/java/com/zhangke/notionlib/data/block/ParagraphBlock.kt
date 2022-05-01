@@ -11,4 +11,9 @@ data class ParagraphBlock(
     val color: String = "default",
 
     val children: List<ChildrenBlock>?
-) : TypedBlock
+) : TypedBlock {
+
+    companion object {
+        const val TYPE = BlockType.PARAGRAPH
+    }
+}

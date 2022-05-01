@@ -3,11 +3,11 @@ package com.zhangke.notionlib.data
 import com.google.gson.*
 import com.google.gson.annotations.JsonAdapter
 import com.google.gson.annotations.SerializedName
-import com.zhangke.framework.utils.json
-import com.zhangke.framework.utils.sharedGson
-import com.zhangke.framework.utils.toJsonTree
+import com.zhangke.framework.utils.*
 import com.zhangke.notionlib.data.block.*
+import com.zhangke.notionlib.utils.NotionDateConvertor
 import java.lang.reflect.Type
+import java.util.*
 
 @JsonAdapter(NotionBlockTypeAdapter::class)
 data class NotionBlock(
@@ -15,21 +15,21 @@ data class NotionBlock(
     @SerializedName("object")
     val objectType: String,
 
-    val id: String,
+    val id: String = "",
 
     val type: String,
 
     @SerializedName("created_time")
-    val createdTime: String?,
+    val createdTime: String? = null,
 
     @SerializedName("created_by")
-    val createdBy: User?,
+    val createdBy: User? = null,
 
     @SerializedName("last_edited_time")
-    val lastEditedTime: String?,
+    val lastEditedTime: String? = null,
 
     @SerializedName("last_edited_by")
-    val lastEditedBy: User?,
+    val lastEditedBy: User? = null,
 
     val archived: Boolean = false,
 
@@ -37,20 +37,22 @@ data class NotionBlock(
     val hasChildren: Boolean = true,
 
     val childrenBlock: TypedBlock? = null
-)
+) {
+    val lastEditedDate: Date? = NotionDateConvertor.convert(lastEditedTime)
+}
 
 class NotionBlockTypeAdapter : JsonSerializer<NotionBlock>, JsonDeserializer<NotionBlock> {
 
     private val typedClassMap = mutableMapOf<String, Class<out TypedBlock>>()
 
     init {
-        typedClassMap["to_do"] = TodoBlock::class.java
-        typedClassMap["paragraph"] = ParagraphBlock::class.java
-        typedClassMap["heading_1"] = HeadingBlock::class.java
-        typedClassMap["heading_2"] = HeadingBlock::class.java
-        typedClassMap["heading_3"] = HeadingBlock::class.java
-        typedClassMap["callout"] = CalloutBlock::class.java
-        typedClassMap["quote"] = QuoteBlock::class.java
+        typedClassMap[TodoBlock.TYPE] = TodoBlock::class.java
+        typedClassMap[ParagraphBlock.TYPE] = ParagraphBlock::class.java
+        typedClassMap[HeadingBlock.TYPE_1] = HeadingBlock::class.java
+        typedClassMap[HeadingBlock.TYPE_2] = HeadingBlock::class.java
+        typedClassMap[HeadingBlock.TYPE_3] = HeadingBlock::class.java
+        typedClassMap[CalloutBlock.TYPE] = CalloutBlock::class.java
+        typedClassMap[QuoteBlock.TYPE] = QuoteBlock::class.java
     }
 
     override fun serialize(
@@ -61,17 +63,17 @@ class NotionBlockTypeAdapter : JsonSerializer<NotionBlock>, JsonDeserializer<Not
         if (src == null) {
             return JsonNull.INSTANCE
         }
-        return json {
-            "object" kv src.objectType
-            "id" kv src.id
-            "created_time" kvNotNull src.createdTime
-            "created_by" kvNotNull src.createdBy.toJsonTree()
-            "last_edited_time" kvNotNull src.lastEditedTime
-            "last_edited_by" kvNotNull src.lastEditedBy.toJsonTree()
-            "archived" kv src.archived
-            "has_children" kv src.hasChildren
-            "type" kv src.type
-            src.type kvNotNull src.childrenBlock?.toJsonTree()
+        return JsonObject().apply {
+            addProperty("object", src.objectType)
+            addProperty("id", src.id)
+            addStringNotNull("created_time", src.createdTime)
+            addNotNull("created_by", src.createdBy.toJsonTree())
+            addStringNotNull("last_edited_time", src.lastEditedTime)
+            addNotNull("last_edited_by", src.lastEditedBy.toJsonTree())
+            addProperty("archived", src.archived)
+            addProperty("has_children", src.hasChildren)
+            addProperty("type", src.type)
+            addNotNull(src.type, src.childrenBlock?.toJsonTree())
         }
     }
 
