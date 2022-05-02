@@ -26,4 +26,18 @@
     <string name="account_icon">个人</string>
 
     <string name="main_floating_desc">添加条目</string>
+
+    <string name="edit_page">编辑页面</string>
+
+    <string name="setting_page_title">设置</string>
+
+    <string name="setting_page_manager">页面管理</string>
+
+    <string name="setting_page_day_night">深色模式</string>
+
+    <string name="setting_page_day_night_day">浅色模式</string>
+
+    <string name="setting_page_day_night_night">深色模式</string>
+
+    <string name="setting_page_day_night_system">跟随系统</string>
 </resources>

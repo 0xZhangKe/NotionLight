@@ -5,11 +5,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zhangke.framework.utils.DataWithLoading
+import com.zhangke.framework.utils.Optional
+import com.zhangke.notionlib.NotionApi
 import com.zhangke.notionlib.NotionRepo
+import com.zhangke.notionlib.auth.NotionAuthorization
 import com.zhangke.notionlib.data.NotionBlock
 import com.zhangke.notionlib.data.NotionPage
 import com.zhangke.notiontodo.config.NotionPageConfig
 import com.zhangke.notiontodo.config.NotionPageConfigRepo
+import io.reactivex.rxjava3.core.Single
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
@@ -33,6 +37,13 @@ class MainViewModel : ViewModel() {
                     }
                 }
         }
+    }
+
+    fun getUserIcon(): Single<Optional<String>> {
+        return NotionAuthorization.readTokenSubject
+            .map {
+                Optional.of(NotionAuthorization.getOauthToken()?.workspaceIcon)
+            }
     }
 
     fun getPageBlockList(pageId: String): MutableStateFlow<DataWithLoading<List<NotionBlock>>> {

@@ -96,5 +96,7 @@ dependencies {
     implementation thirdparty.rxjava3
     implementation thirdparty.rxandroid3
     implementation thirdparty.swiperefresh
+    implementation thirdparty.coil
+    implementation thirdparty.'coil-compose'
 
 }

@@ -5,6 +5,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -12,9 +13,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import coil.imageLoader
+import coil.request.ImageRequest
+import coil.transform.CircleCropTransformation
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.zhangke.architect.rxjava.attachToLifecycle
 import com.zhangke.framework.utils.toast
 import com.zhangke.notiontodo.R
 import com.zhangke.notiontodo.addblock.AddBlockActivity
@@ -24,6 +29,8 @@ import com.zhangke.notiontodo.config.NotionPageConfig
 class MainActivity : AppCompatActivity() {
 
     private val viewModel: MainViewModel by viewModels()
+
+    private lateinit var accountItem: MenuItem
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,10 +67,30 @@ class MainActivity : AppCompatActivity() {
                     initTabUi(tabLayout, viewPager, it)
                 }
             }
+        viewModel.getUserIcon()
+            .subscribe({
+                it.getOrNull()?.loadImageForAccount()
+            }, {
+                it.printStackTrace()
+            })
+            .attachToLifecycle(lifecycle)
+    }
+
+    private fun String.loadImageForAccount() {
+        val request = ImageRequest.Builder(this@MainActivity)
+            .lifecycle(lifecycle)
+            .data(this)
+            .transformations(CircleCropTransformation())
+            .target {
+                accountItem.icon = it
+            }
+            .build()
+        imageLoader.enqueue(request)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
+        accountItem = menu.findItem(R.id.account_item)!!
         return true
     }
 
