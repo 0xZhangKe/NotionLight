@@ -37,6 +37,7 @@ dependencies {
     implementation compose.compiler
     implementation compose.ui
 
+    implementation support.appcompat
     implementation support.'datastore-preferences'
     implementation support.datastore
 

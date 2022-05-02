@@ -2,6 +2,7 @@ package com.zhangke.notionlib
 
 import com.google.gson.JsonObject
 import com.zhangke.architect.network.newRetrofit
+import com.zhangke.framework.utils.addStringNotNull
 import com.zhangke.notionlib.auth.NotionAuthorization
 import com.zhangke.notionlib.data.NotionBlock
 import com.zhangke.notionlib.data.NotionListEntry
@@ -45,7 +46,7 @@ object NotionRepo {
 
     private suspend fun queryPages(startCursor: String? = null): NotionResponse<NotionListEntry<NotionPage>> {
         val json = JsonObject().apply {
-            addProperty("start_cursor", startCursor)
+            addStringNotNull("start_cursor", startCursor)
             addProperty("page_size", 100)
             val filter = JsonObject().apply {
                 addProperty("property", "object")

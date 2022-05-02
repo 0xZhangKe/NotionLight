@@ -22,4 +22,8 @@
     <string name="input_empty">请输入内容</string>
 
     <string name="add_block_success">添加成功</string>
+
+    <string name="account_icon">个人</string>
+
+    <string name="main_floating_desc">添加条目</string>
 </resources>

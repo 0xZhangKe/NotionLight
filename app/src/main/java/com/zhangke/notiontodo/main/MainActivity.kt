@@ -1,31 +1,21 @@
 package com.zhangke.notiontodo.main
 
 import android.os.Bundle
-import androidx.activity.compose.setContent
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Save
-import androidx.compose.material3.*
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import com.zhangke.framework.utils.toast
-import com.zhangke.notionlib.data.NotionBlock
-import com.zhangke.notionlib.ext.getSimpleText
 import com.zhangke.notiontodo.R
 import com.zhangke.notiontodo.addblock.AddBlockActivity
 import com.zhangke.notiontodo.addpage.AddPageActivity
@@ -33,145 +23,79 @@ import com.zhangke.notiontodo.config.NotionPageConfig
 
 class MainActivity : AppCompatActivity() {
 
+    private val viewModel: MainViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val vm: MainViewModel by viewModels()
-        setContent {
-            MaterialTheme {
-                PageScreen(vm)
-            }
-        }
-    }
+        //TODO 由于 Compose 的 TabLayout 比较拉，而且没有 ViewPager，这个页面暂时用xml写，后面改成Compose。
+        setContentView(R.layout.activity_main)
 
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    fun PageScreen(vm: MainViewModel) {
-        var tabIndex by remember { mutableStateOf(0) }
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = {
-                        Text(
-                            text = getString(R.string.app_name),
-                            color = Color.Black,
-                            fontSize = 18.sp,
-                        )
-                    },
-                    actions = {
-                        IconButton(onClick = { /*TODO*/ }) {
-                            Icon(
-                                painter = rememberVectorPainter(image = Icons.Filled.AccountCircle),
-                                contentDescription = "save"
-                            )
-                        }
-                    },
-                    backgroundColor = Color.White,
-                )
-            },
-            floatingActionButton = {
-                FloatingActionButton(
-                    modifier = Modifier.padding(end = 20.dp, bottom = 70.dp),
-                    onClick = {
-                        AddBlockActivity.open(
-                            this,
-                            vm.pageConfigList.value?.getOrNull(tabIndex)?.id
-                        )
-                    }) {
-                    Icon(
-                        painter = rememberVectorPainter(image = Icons.Filled.Add),
-                        contentDescription = "ADD"
-                    )
-                }
-            }) {
-            val pageConfigListFlow = vm.pageConfigList.collectAsState()
-            val pageConfigList = pageConfigListFlow.value
-            if (pageConfigList.isNullOrEmpty()) {
-                EmptyBlockPage()
-            } else {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    ScrollableTabRow(
-                        selectedTabIndex = tabIndex,
-                        edgePadding = 0.dp,
-                        indicator = { tabPositions ->
-                            TabRowDefaults.Indicator(
-                                Modifier.tabIndicatorOffset(tabPositions[tabIndex])
-                            )
-                        },
-                        modifier = Modifier.height(48.dp),
-                    ) {
-                        pageConfigList.forEachIndexed { index, item ->
-                            Tab(
-                                modifier = Modifier.fillMaxHeight(),
-                                selected = tabIndex == index,
-                                onClick = {
-                                    tabIndex = index
-                                },
-                            ) {
-                                Text(
-                                    text = item.title,
-                                    modifier = Modifier.padding(10.dp, 0.dp, 10.dp, 0.dp)
-                                )
-                            }
-                        }
-                    }
-                    val list =
-                        vm.getPageBlockList(pageConfigList[tabIndex].id).collectAsState().value
-                    PageContent(blockList = list)
+        val toolbar = findViewById<Toolbar>(R.id.tool_bar)
+        val emptyContainer = findViewById<ViewGroup>(R.id.empty_container)
+        val contentContainer = findViewById<ViewGroup>(R.id.content_container)
+        val viewPager = findViewById<ViewPager2>(R.id.view_pager)
+        val tabLayout = findViewById<TabLayout>(R.id.tab_layout)
+        val floating = findViewById<FloatingActionButton>(R.id.floating)
+
+        findViewById<View>(R.id.add_icon).setOnClickListener {
+            AddPageActivity.open(this)
+        }
+        setSupportActionBar(toolbar)
+        floating.setOnClickListener {
+            val pageIndex = viewModel.pageConfigList.value?.getOrNull(viewPager.currentItem)?.id
+                ?: return@setOnClickListener
+            AddBlockActivity.open(this, pageIndex)
+        }
+
+        viewModel.pageConfigList
+            .observe(this) {
+                if (it.isNullOrEmpty()) {
+                    contentContainer.visibility = View.GONE
+                    emptyContainer.visibility = View.VISIBLE
+                    floating.visibility = View.GONE
+                } else {
+                    contentContainer.visibility = View.VISIBLE
+                    emptyContainer.visibility = View.GONE
+                    floating.visibility = View.VISIBLE
+                    initTabUi(tabLayout, viewPager, it)
                 }
             }
-        }
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    fun PageContent(blockList: List<NotionBlock>?) {
-        if (blockList.isNullOrEmpty()) return
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(bottom = 50.dp),
-        ) {
-            items(blockList.size) { index ->
-                val item = blockList[index]
-                Surface(
-                    shadowElevation = 2.dp,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(15.dp, 10.dp, 15.dp, 10.dp)
-                ) {
-                    Text(
-                        modifier = Modifier.padding(13.dp, 13.dp, 13.dp, 13.dp),
-                        text = item.childrenBlock?.getSimpleText().orEmpty()
-                    )
-                }
-            }
-        }
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return true
     }
 
-    @Composable
-    fun EmptyBlockPage() {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .clickable(
-                    enabled = true,
-                    role = Role.Button,
-                ) {
-                    AddPageActivity.open(this)
-                },
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.account_item) {
+            toast("account")
+        }
+        return false
+    }
 
-            Image(
-                painter = rememberVectorPainter(image = Icons.Filled.Add),
-                contentDescription = "empty-icon",
-                modifier = Modifier.size(80.dp),
-            )
+    private fun initTabUi(
+        tabLayout: TabLayout,
+        viewPager: ViewPager2,
+        pageList: List<NotionPageConfig>
+    ) {
+        val adapter = PageAdapter(this, pageList)
+        viewPager.adapter = adapter
+        val mediator = TabLayoutMediator(
+            tabLayout, viewPager
+        ) { tab, position ->
+            tab.text = pageList[position].title
+        }
+        mediator.attach()
+    }
 
-            Text(text = getString(R.string.add_page_guid))
+    class PageAdapter(activity: FragmentActivity, private val pageList: List<NotionPageConfig>) :
+        FragmentStateAdapter(activity) {
+
+        override fun getItemCount(): Int = pageList.size
+
+        override fun createFragment(position: Int): Fragment {
+            return PageFragment.create(pageList[position].id)
         }
     }
 }

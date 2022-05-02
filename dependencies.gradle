@@ -92,5 +92,6 @@ ext {
             'retrofit'                      : "com.squareup.retrofit2:retrofit:${retrofit2_version}",
             'retrofit-converter-gson'       : "com.squareup.retrofit2:converter-gson:${retrofit2_version}",
             'gson'                          : "com.google.code.gson:gson:2.9.0",
+            'swiperefresh'                  : "com.google.accompanist:accompanist-swiperefresh:0.24.7-alpha"
     ]
 }

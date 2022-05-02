@@ -37,7 +37,8 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.2.0-alpha04"
+        kotlinCompilerExtensionVersion = rootProject.ext.compose_version
+        kotlinCompilerVersion = "1.6.10"
     }
 }
 
@@ -62,8 +63,10 @@ dependencies {
     implementation compose.foundation
     implementation compose.'foundation-layout'
     implementation compose.'runtime-livedata'
-    
+
     implementation support.appcompat
+    implementation support.fragment
+    implementation support.'fragment-ktx'
     implementation support.material
     implementation support.'activity-compose'
     implementation support.core
@@ -92,5 +95,6 @@ dependencies {
     implementation thirdparty.gson
     implementation thirdparty.rxjava3
     implementation thirdparty.rxandroid3
+    implementation thirdparty.swiperefresh
 
 }
