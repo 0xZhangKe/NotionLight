@@ -6,31 +6,30 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.LinearGradient
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
 import com.zhangke.notiontodo.R
+import com.zhangke.notiontodo.composable.AppMaterialTheme
+import com.zhangke.notiontodo.pagemanager.PageManagerActivity
 
 class SettingActivity : ComponentActivity() {
 
@@ -47,7 +46,7 @@ class SettingActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val vm: SettingViewModel by viewModels()
         setContent {
-            MaterialTheme {
+            AppMaterialTheme {
                 Page(vm)
             }
         }
@@ -56,29 +55,7 @@ class SettingActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun Page(vm: SettingViewModel) {
-        Scaffold(
-//            topBar = {
-//                TopAppBar(
-//                    navigationIcon = {
-//                        IconButton(onClick = { finish() }) {
-//                            Icon(
-//                                painter = rememberVectorPainter(image = Icons.Filled.ArrowBack),
-//                                "back"
-//                            )
-//                        }
-//                    },
-//                    title = {
-//                        Text(
-//                            text = getString(R.string.setting_page_title),
-//                            color = Color.Black,
-//                            fontSize = 18.sp,
-//                        )
-//                    },
-//                    backgroundColor = Color.White,
-//                )
-//            }
-        ) {
-
+        Scaffold {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -163,37 +140,96 @@ class SettingActivity : ComponentActivity() {
                         .padding(top = 20.dp)
                 )
 
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 20.dp, end = 20.dp, top = 30.dp)
-                ) {
-                    Text(
-                        text = getString(R.string.setting_page_manager),
-                        color = Color.Gray,
-                    )
-                }
+                CreateSettingLine(
+                    modifier = Modifier.clickable {
+                        PageManagerActivity.open(this@SettingActivity)
+                    },
+                    icon = Icons.Filled.ArrowBack,
+                    title = getString(R.string.setting_page_manager),
+                    subtitle = getString(R.string.setting_page_manager),
+                )
 
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 20.dp, end = 20.dp, top = 10.dp)
-                ) {
-                    Text(
-                        text = getString(R.string.setting_page_day_night),
-                        color = Color.Gray,
-                    )
-                    Spacer(modifier = Modifier.weight(1F))
-                    Text(
-                        text = getString(R.string.setting_page_day_night_day),
-                        color = Color.Gray,
-                    )
-                }
+                CreateSettingLine(
+                    modifier = Modifier.clickable {
 
+                    },
+                    icon = Icons.Filled.ArrowBack,
+                    title = getString(R.string.setting_page_day_night),
+                    subtitle = getString(R.string.setting_page_day_night_day)
+                )
 
+                CreateSettingLine(
+                    modifier = Modifier.clickable {
+
+                    },
+                    icon = Icons.Filled.ArrowBack,
+                    title = getString(R.string.setting_page_appraise),
+                    subtitle = getString(R.string.setting_page_appraise_desc)
+                )
+
+                CreateSettingLine(
+                    modifier = Modifier.clickable {
+
+                    },
+                    icon = Icons.Filled.ArrowBack,
+                    title = getString(R.string.setting_page_about_title),
+                    subtitle = vm.getAppVersionDesc()
+                )
+
+                CreateSettingLine(
+                    modifier = Modifier.clickable {
+
+                    },
+                    icon = Icons.Filled.ArrowBack,
+                    title = getString(R.string.setting_page_help),
+                    subtitle = getString(R.string.setting_page_help_desc)
+                )
             }
+        }
+    }
+
+    @Composable
+    fun CreateSettingLine(
+        modifier: Modifier,
+        icon: ImageVector,
+        title: String,
+        subtitle: String,
+    ) {
+        ConstraintLayout(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 20.dp)
+        ) {
+            val (iconId, titleId, subtitleId) = createRefs()
+            Icon(
+                modifier = Modifier
+                    .size(20.dp, 20.dp)
+                    .constrainAs(iconId) {
+                        top.linkTo(titleId.top)
+                        bottom.linkTo(subtitleId.bottom)
+                        start.linkTo(parent.start)
+                    },
+                painter = rememberVectorPainter(image = icon),
+                contentDescription = "icon1"
+            )
+
+            Text(
+                modifier = Modifier.constrainAs(titleId) {
+                    top.linkTo(parent.top)
+                    start.linkTo(iconId.end, margin = 20.dp)
+                },
+                text = title,
+                color = Color.Black,
+            )
+
+            Text(
+                modifier = Modifier.constrainAs(subtitleId) {
+                    top.linkTo(titleId.bottom, margin = 3.dp)
+                    start.linkTo(titleId.start)
+                },
+                text = subtitle,
+                color = Color.Gray,
+            )
         }
     }
 }

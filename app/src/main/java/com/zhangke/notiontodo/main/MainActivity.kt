@@ -5,7 +5,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -20,11 +19,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.zhangke.architect.rxjava.attachToLifecycle
-import com.zhangke.framework.utils.toast
 import com.zhangke.notiontodo.R
 import com.zhangke.notiontodo.addblock.AddBlockActivity
-import com.zhangke.notiontodo.addpage.AddPageActivity
+import com.zhangke.notiontodo.pagemanager.AddPageActivity
 import com.zhangke.notiontodo.config.NotionPageConfig
+import com.zhangke.notiontodo.setting.SettingActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -96,7 +95,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.account_item) {
-            toast("account")
+            SettingActivity.open(this)
         }
         return false
     }

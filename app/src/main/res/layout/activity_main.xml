@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -46,7 +45,12 @@
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tab_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                app:tabBackground="?attr/colorPrimaryVariant"
+                app:tabIndicatorColor="?attr/colorOnPrimary"
+                app:tabRippleColor="?attr/colorOnSecondary"
+                app:tabSelectedTextColor="?android:attr/textColorPrimary"
+                app:tabTextColor="?android:attr/textColorSecondary" />
 
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/view_pager"
@@ -61,7 +65,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="20dp"
-        android:layout_marginBottom="35dp"
+        android:layout_marginBottom="45dp"
         android:contentDescription="@string/main_floating_desc"
         android:src="@drawable/ic_baseline_add_24" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

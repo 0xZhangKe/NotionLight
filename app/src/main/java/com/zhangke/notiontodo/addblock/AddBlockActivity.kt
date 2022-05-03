@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import com.zhangke.framework.utils.StatusBarUtils
 import com.zhangke.framework.utils.toast
 import com.zhangke.notiontodo.R
+import com.zhangke.notiontodo.composable.AppMaterialTheme
 
 class AddBlockActivity : ComponentActivity() {
 
@@ -48,7 +49,7 @@ class AddBlockActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val vm: AddBlockViewModel by viewModels()
         setContent {
-            MaterialTheme {
+            AppMaterialTheme {
                 PageScreen(vm = vm)
             }
         }

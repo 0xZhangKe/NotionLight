@@ -21,10 +21,10 @@ object NotionPageConfigRepo {
             .queryAllConfig()
     }
 
-    suspend fun deletePageConfig(config: NotionPageConfig) {
+    suspend fun deletePageConfig(configs: List<NotionPageConfig>) {
         return NotionPageDataBase.instance
             .pageConfigDao()
-            .deletePage(config)
+            .deletePage(configs)
     }
 
     suspend fun insetBlocks(pageId: String, block: List<NotionBlock>) {

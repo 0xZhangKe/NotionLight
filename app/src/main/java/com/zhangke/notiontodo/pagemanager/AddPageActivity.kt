@@ -1,4 +1,4 @@
-package com.zhangke.notiontodo.addpage
+package com.zhangke.notiontodo.pagemanager
 
 import android.app.Activity
 import android.content.Intent
@@ -7,7 +7,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
@@ -24,12 +27,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
 import com.zhangke.framework.utils.toast
-import com.zhangke.notionlib.data.NotionPage
-import com.zhangke.notionlib.data.block.BlockType
-import com.zhangke.notionlib.ext.getSimpleText
 import com.zhangke.notiontodo.R
+import com.zhangke.notiontodo.composable.AppMaterialTheme
 import com.zhangke.notiontodo.composable.PageLoading
-import com.zhangke.notiontodo.config.NotionPageConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -41,7 +41,7 @@ class AddPageActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MaterialTheme {
+            AppMaterialTheme {
                 PageScreen(vm)
             }
         }
@@ -55,7 +55,6 @@ class AddPageActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun PageScreen(vm: AddPageViewModel) {
-        val selectedPageList = mutableListOf<NotionPageConfig>()
         Scaffold(
             topBar = {
                 TopAppBar(
@@ -71,7 +70,7 @@ class AddPageActivity : ComponentActivity() {
                         IconButton(
                             onClick = {
                                 lifecycleScope.launch {
-                                    vm.savePage(selectedPageList)
+                                    vm.savePage()
                                     withContext(Dispatchers.Main) {
                                         toast(R.string.page_add_success)
                                         finish()
@@ -92,7 +91,7 @@ class AddPageActivity : ComponentActivity() {
                             fontSize = 18.sp,
                         )
                     },
-                    backgroundColor = Color.White,
+                    backgroundColor = MaterialTheme.colorScheme.surface
                 )
             }) {
             val loading = vm.loading.observeAsState(true)
@@ -106,10 +105,9 @@ class AddPageActivity : ComponentActivity() {
                 ) {
                     items(list.size) { index ->
                         val item = list[index]
-                        val pageConfig = item.convertToPageConfig()
+                        val page = item.page
                         var checked: Boolean by remember {
-                            val defaultChecked = selectedPageList.indexOf(pageConfig) != -1
-                            mutableStateOf(defaultChecked)
+                            mutableStateOf(item.added)
                         }
                         Surface(
                             contentColor = Color.White,
@@ -121,34 +119,22 @@ class AddPageActivity : ComponentActivity() {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
-                                Checkbox(checked = checked, onCheckedChange = { checked = it })
+                                Checkbox(
+                                    checked = checked,
+                                    onCheckedChange = {
+                                        checked = it
+                                        item.added = checked
+                                    })
                                 Text(
-                                    text = item.getTitle(),
+                                    text = item.title,
                                     color = Color.Black
                                 )
                             }
-                        }
-                        if (checked) {
-                            selectedPageList += pageConfig
-                        } else {
-                            selectedPageList -= pageConfig
                         }
                     }
                 }
             }
         }
-    }
-
-    private fun NotionPage.getTitle(): String {
-        return properties?.title?.title?.getSimpleText().orEmpty()
-    }
-
-    private fun NotionPage.convertToPageConfig(): NotionPageConfig {
-        return NotionPageConfig(
-            id = id,
-            title = getTitle(),
-            type = BlockType.CALLOUT
-        )
     }
 
     companion object {

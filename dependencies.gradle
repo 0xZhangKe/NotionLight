@@ -61,6 +61,7 @@ ext {
             'material-icons-extended'   : "androidx.compose.material:material-icons-extended:${compose_version}",
             'runtime'                   : "androidx.compose.runtime:runtime:${compose_version}",
             'runtime-livedata'          : "androidx.compose.runtime:runtime-livedata:${compose_version}",
+            'constraintlayout-compose'  : "androidx.constraintlayout:constraintlayout-compose:1.0.0-beta02"
     ]
 
     kotlin_libs = [

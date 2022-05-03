@@ -39,7 +39,7 @@ interface NotionPageConfigDao {
     fun queryAllConfig(): Flow<List<NotionPageConfig>>
 
     @Delete
-    suspend fun deletePage(config: NotionPageConfig)
+    suspend fun deletePage(config: List<NotionPageConfig>)
 }
 
 @Dao

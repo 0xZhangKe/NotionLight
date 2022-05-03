@@ -12,9 +12,7 @@
         android:theme="@style/Theme.NotionTodo">
         <activity
             android:name=".main.MainActivity"
-            android:exported="true"
-            android:theme="@style/Theme.Material3.Light.NoActionBar">
-
+            android:exported="true">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,21 +21,21 @@
         </activity>
 
         <activity
-            android:name=".addpage.AddPageActivity"
-            android:exported="true"
-            android:theme="@style/Theme.Material3.Light.NoActionBar" />
+            android:name=".pagemanager.AddPageActivity"
+            android:exported="true" />
 
         <activity
             android:name=".addblock.AddBlockActivity"
             android:exported="true"
-            android:launchMode="singleTask"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+            android:launchMode="singleTask" />
 
         <activity
             android:name=".setting.SettingActivity"
-            android:exported="true"
-            android:theme="@style/Theme.Material3.Light.NoActionBar" >
-        </activity>
+            android:exported="true" />
+
+        <activity
+            android:name=".pagemanager.PageManagerActivity"
+            android:exported="true" />
     </application>
 
 </manifest>

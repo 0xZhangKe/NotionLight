@@ -33,6 +33,8 @@
 
     <string name="setting_page_manager">页面管理</string>
 
+    <string name="setting_page_manager_subtitle">新增或移除页面</string>
+
     <string name="setting_page_day_night">深色模式</string>
 
     <string name="setting_page_day_night_day">浅色模式</string>
@@ -40,4 +42,16 @@
     <string name="setting_page_day_night_night">深色模式</string>
 
     <string name="setting_page_day_night_system">跟随系统</string>
+
+    <string name="setting_page_appraise">给我们评价</string>
+
+    <string name="setting_page_appraise_desc">这可以让我们知道如何改进</string>
+
+    <string name="setting_page_about_title">关于</string>
+
+    <string name="setting_page_help">帮助文档</string>
+
+    <string name="setting_page_help_desc">关于使用中的问题</string>
+
+    <string name="page_manager_title">页面管理</string>
 </resources>

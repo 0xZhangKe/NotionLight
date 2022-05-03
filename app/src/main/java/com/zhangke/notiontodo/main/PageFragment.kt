@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -24,6 +26,7 @@ import com.zhangke.framework.utils.LoadingState
 import com.zhangke.notionlib.data.NotionBlock
 import com.zhangke.notionlib.ext.getSimpleText
 import com.zhangke.notiontodo.R
+import com.zhangke.notiontodo.composable.AppMaterialTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class PageFragment : Fragment() {
@@ -55,7 +58,7 @@ class PageFragment : Fragment() {
         val blockFlow = viewModel.getPageBlockList(pageId)
         return ComposeView(requireContext()).apply {
             setContent {
-                MaterialTheme {
+                AppMaterialTheme {
                     PageContent(blockFlow)
                 }
             }
@@ -68,6 +71,7 @@ class PageFragment : Fragment() {
         val blockListWithLoading = blockFlow.collectAsState().value
         val state = blockListWithLoading.state
         val refreshing = state == LoadingState.LOADING
+        val listState: LazyListState = rememberLazyListState()
         when (state) {
             LoadingState.FAILED -> {
                 Box(
@@ -90,6 +94,7 @@ class PageFragment : Fragment() {
                     val blockList = blockListWithLoading.data
                     if (blockList.isNullOrEmpty()) return@SwipeRefresh
                     LazyColumn(
+                        state = listState,
                         modifier = Modifier.fillMaxSize(),
                         contentPadding = PaddingValues(bottom = 50.dp),
                     ) {

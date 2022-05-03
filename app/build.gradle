@@ -11,8 +11,8 @@ android {
         applicationId "com.zhangke.notiontodo"
         minSdk rootProject.ext.minSdkVersion
         targetSdk rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode 10010
+        versionName "1.0.1"
         multiDexEnabled = true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -63,6 +63,7 @@ dependencies {
     implementation compose.foundation
     implementation compose.'foundation-layout'
     implementation compose.'runtime-livedata'
+    implementation compose.'constraintlayout-compose'
 
     implementation support.appcompat
     implementation support.fragment
@@ -74,6 +75,8 @@ dependencies {
     implementation support.collection
     implementation support.'collection-ktx'
     implementation support.multidex
+    implementation support.'datastore-preferences'
+    implementation support.datastore
     implementation support.room
     implementation support.'room-ktx'
     kapt           support.'room-compiler'

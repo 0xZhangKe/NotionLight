@@ -2,6 +2,7 @@ package com.zhangke.notionlib.auth
 
 import android.content.Intent
 import android.net.Uri
+import com.zhangke.architect.coroutines.ApplicationScope
 import com.zhangke.architect.datastore.dataStore
 import com.zhangke.architect.datastore.getString
 import com.zhangke.architect.datastore.putString
@@ -12,7 +13,6 @@ import com.zhangke.notionlib.NotionRepo
 import com.zhangke.notionlib.data.OauthToken
 import io.reactivex.rxjava3.subjects.SingleSubject
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -29,7 +29,7 @@ object NotionAuthorization {
     private const val OAUTH_TOKEN_KEY = "oauth_token"
 
     fun start() {
-        GlobalScope.launch(Dispatchers.IO) {
+        ApplicationScope.launch(Dispatchers.IO) {
             val oauthTokenJson = appContext.dataStore.getString(OAUTH_TOKEN_KEY)
             if (!oauthTokenJson.isNullOrEmpty()) {
                 token = sharedGson.fromJson(oauthTokenJson, OauthToken::class.java)
