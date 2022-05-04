@@ -3,17 +3,18 @@ package com.zhangke.notiontodo.setting
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,11 +28,16 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
+import com.zhangke.architect.activity.BaseActivity
+import com.zhangke.architect.theme.AppMaterialTheme
+import com.zhangke.architect.theme.PrimaryText
+import com.zhangke.architect.theme.SecondaryText
 import com.zhangke.notiontodo.R
-import com.zhangke.notiontodo.composable.AppMaterialTheme
 import com.zhangke.notiontodo.pagemanager.PageManagerActivity
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
-class SettingActivity : ComponentActivity() {
+class SettingActivity : BaseActivity() {
 
     companion object {
 
@@ -55,6 +61,7 @@ class SettingActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun Page(vm: SettingViewModel) {
+        val coroutineScope = rememberCoroutineScope()
         Scaffold {
             Row(
                 modifier = Modifier
@@ -84,6 +91,7 @@ class SettingActivity : ComponentActivity() {
 
             Column(
                 modifier = Modifier
+                    .verticalScroll(rememberScrollState())
                     .fillMaxWidth()
                     .padding(top = 100.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -95,7 +103,7 @@ class SettingActivity : ComponentActivity() {
                 ) {
                     AsyncImage(
                         model = ImageRequest.Builder(this@SettingActivity)
-                            .data("https://s3-us-west-2.amazonaws.com/public.notion-static.com/19d871ea-9ec2-4964-8b30-fdbd15272d27/005zmwvEly8gkr67scc73j30ru0ru792.jpg")
+                            .data(vm.userInfo?.workspaceIcon)
                             .transformations(CircleCropTransformation())
                             .build(),
                         contentDescription = "workspace icon",
@@ -104,11 +112,10 @@ class SettingActivity : ComponentActivity() {
                     )
                 }
 
-                Text(
+                PrimaryText(
                     text = "Zhangke's WorkSpace",
                     fontWeight = FontWeight.Bold,
-                    color = Color.Black,
-                    fontSize = 20.sp,
+                    fontSize = 22.sp,
                     modifier = Modifier.padding(top = 10.dp)
                 )
 
@@ -116,7 +123,7 @@ class SettingActivity : ComponentActivity() {
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(top = 5.dp)
                 ) {
-                    Text(
+                    SecondaryText(
                         text = "created by zhangke",
                         color = Color.Gray,
                         fontSize = 18.sp
@@ -124,7 +131,7 @@ class SettingActivity : ComponentActivity() {
 
                     AsyncImage(
                         model = ImageRequest.Builder(this@SettingActivity)
-                            .data("https://s3-us-west-2.amazonaws.com/public.notion-static.com/19d871ea-9ec2-4964-8b30-fdbd15272d27/005zmwvEly8gkr67scc73j30ru0ru792.jpg")
+                            .data(vm.userInfo?.workspaceIcon)
                             .transformations(CircleCropTransformation())
                             .build(),
                         contentDescription = "workspace icon",
@@ -149,14 +156,71 @@ class SettingActivity : ComponentActivity() {
                     subtitle = getString(R.string.setting_page_manager),
                 )
 
-                CreateSettingLine(
-                    modifier = Modifier.clickable {
+                var dayNightModeExpanded by remember { mutableStateOf(false) }
+                ConstraintLayout(
+                    modifier = Modifier
+                        .clickable {
+                            dayNightModeExpanded = true
+                        }
+                        .fillMaxWidth()
+                        .padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 20.dp)
+                ) {
+                    val (iconId, titleId, subtitleId, dropDownMenu) = createRefs()
+                    Icon(
+                        modifier = Modifier
+                            .size(20.dp, 20.dp)
+                            .constrainAs(iconId) {
+                                top.linkTo(titleId.top)
+                                bottom.linkTo(subtitleId.bottom)
+                                start.linkTo(parent.start)
+                            },
+                        painter = rememberVectorPainter(image = Icons.Filled.ArrowBack),
+                        contentDescription = "icon1"
+                    )
 
-                    },
-                    icon = Icons.Filled.ArrowBack,
-                    title = getString(R.string.setting_page_day_night),
-                    subtitle = getString(R.string.setting_page_day_night_day)
-                )
+                    PrimaryText(
+                        modifier = Modifier.constrainAs(titleId) {
+                            top.linkTo(parent.top)
+                            start.linkTo(iconId.end, margin = 20.dp)
+                        },
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium,
+                        text = getString(R.string.setting_page_day_night),
+                    )
+
+                    val currentDayNightMode = vm.currentDayNightMode.observeAsState().value
+                    SecondaryText(
+                        modifier = Modifier.constrainAs(subtitleId) {
+                            top.linkTo(titleId.bottom, margin = 3.dp)
+                            start.linkTo(titleId.start)
+                        },
+                        fontSize = 14.sp,
+                        text = currentDayNightMode?.modeName.orEmpty(),
+                        color = Color.Gray,
+                    )
+                    DropdownMenu(
+                        modifier = Modifier.constrainAs(dropDownMenu) {
+                            top.linkTo(subtitleId.bottom)
+                            start.linkTo(subtitleId.start)
+                        },
+                        expanded = dayNightModeExpanded,
+                        onDismissRequest = { dayNightModeExpanded = false }) {
+                        vm.dayNightModeList.forEach {
+                            DropdownMenuItem(
+                                text = {
+                                    Text(text = it.modeName)
+                                },
+                                onClick = {
+                                    dayNightModeExpanded = false
+                                    coroutineScope.launch {
+                                        delay(200)
+                                        vm.updateDayNight(it)
+                                    }
+                                }
+                            )
+                        }
+                    }
+                }
 
                 CreateSettingLine(
                     modifier = Modifier.clickable {
@@ -183,6 +247,15 @@ class SettingActivity : ComponentActivity() {
                     icon = Icons.Filled.ArrowBack,
                     title = getString(R.string.setting_page_help),
                     subtitle = getString(R.string.setting_page_help_desc)
+                )
+
+                CreateSettingLine(
+                    modifier = Modifier.clickable {
+
+                    },
+                    icon = Icons.Filled.ArrowBack,
+                    title = getString(R.string.setting_page_open_source),
+                    subtitle = getString(R.string.setting_page_open_source_desc)
                 )
             }
         }
@@ -213,16 +286,18 @@ class SettingActivity : ComponentActivity() {
                 contentDescription = "icon1"
             )
 
-            Text(
+            PrimaryText(
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium,
                 modifier = Modifier.constrainAs(titleId) {
                     top.linkTo(parent.top)
                     start.linkTo(iconId.end, margin = 20.dp)
                 },
                 text = title,
-                color = Color.Black,
             )
 
-            Text(
+            SecondaryText(
+                fontSize = 14.sp,
                 modifier = Modifier.constrainAs(subtitleId) {
                     top.linkTo(titleId.bottom, margin = 3.dp)
                     start.linkTo(titleId.start)

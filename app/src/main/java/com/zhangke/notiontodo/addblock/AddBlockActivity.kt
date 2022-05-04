@@ -3,7 +3,6 @@ package com.zhangke.notiontodo.addblock
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
@@ -14,9 +13,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -26,12 +23,14 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.zhangke.architect.activity.BaseActivity
+import com.zhangke.architect.theme.AppMaterialTheme
+import com.zhangke.architect.theme.PrimaryText
 import com.zhangke.framework.utils.StatusBarUtils
 import com.zhangke.framework.utils.toast
 import com.zhangke.notiontodo.R
-import com.zhangke.notiontodo.composable.AppMaterialTheme
 
-class AddBlockActivity : ComponentActivity() {
+class AddBlockActivity : BaseActivity() {
 
     companion object {
 
@@ -66,7 +65,7 @@ class AddBlockActivity : ComponentActivity() {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0x99000000)),
+                .background(Color(0xAA000000)),
         ) {
             Surface(
                 modifier = Modifier
@@ -78,11 +77,10 @@ class AddBlockActivity : ComponentActivity() {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    Text(
+                    PrimaryText(
                         modifier = Modifier.padding(top = 15.dp),
                         text = getString(R.string.add_block_title),
-                        fontSize = 18.sp,
-                        color = Color.Black,
+                        fontSize = 18.sp
                     )
 
                     Row(
@@ -90,7 +88,7 @@ class AddBlockActivity : ComponentActivity() {
                             .fillMaxWidth()
                             .padding(20.dp, 15.dp, 20.dp, 0.dp)
                     ) {
-                        Text(text = getString(R.string.add_block_item_page_type))
+                        PrimaryText(text = getString(R.string.add_block_item_page_type))
                         Spacer(modifier = Modifier.weight(1F))
 
                         var pageTypeExpanded by remember { mutableStateOf(false) }
@@ -104,7 +102,7 @@ class AddBlockActivity : ComponentActivity() {
                             ) {
                                 val pageConfig = vm.currentPage.observeAsState()
                                 pageConfig.value?.title?.let {
-                                    Text(text = it)
+                                    PrimaryText(text = it)
                                 }
                                 Icon(
                                     modifier = Modifier.padding(start = 3.dp),
@@ -120,7 +118,7 @@ class AddBlockActivity : ComponentActivity() {
                                         pageTypeExpanded = false
                                         vm.currentPage.value = it
                                     }) {
-                                        Text(text = it.title)
+                                        PrimaryText(text = it.title)
                                     }
                                 }
                             }
@@ -132,7 +130,7 @@ class AddBlockActivity : ComponentActivity() {
                             .fillMaxWidth()
                             .padding(20.dp, 15.dp, 20.dp, 0.dp)
                     ) {
-                        Text(text = getString(R.string.add_block_item_block_type))
+                        PrimaryText(text = getString(R.string.add_block_item_block_type))
                         Spacer(modifier = Modifier.weight(1F))
 
                         var blockTypeExpanded by remember { mutableStateOf(false) }
@@ -145,7 +143,7 @@ class AddBlockActivity : ComponentActivity() {
                             ) {
                                 val blockType = vm.currentBlockType.observeAsState()
                                 blockType.value?.let {
-                                    Text(text = it)
+                                    PrimaryText(text = it)
                                 }
                                 Icon(
                                     modifier = Modifier.padding(start = 3.dp),
@@ -161,7 +159,7 @@ class AddBlockActivity : ComponentActivity() {
                                         blockTypeExpanded = false
                                         vm.currentBlockType.value = it
                                     }) {
-                                        Text(text = it)
+                                        PrimaryText(text = it)
                                     }
                                 }
                             }
@@ -193,14 +191,13 @@ class AddBlockActivity : ComponentActivity() {
                     .padding(20.dp, 10.dp, 20.dp, 0.dp)
             ) {
                 Button(
+                    colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.surface),
                     shape = RoundedCornerShape(30.dp),
-                    colors = ButtonDefaults.buttonColors(Color.White),
                     onClick = {
                         finish()
                     }
                 ) {
-                    Text(
-                        color = Color.Black,
+                    PrimaryText(
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(start = 10.dp, end = 10.dp),
                         text = getString(R.string.cancel)
@@ -210,14 +207,13 @@ class AddBlockActivity : ComponentActivity() {
                 Spacer(modifier = Modifier.weight(1F))
 
                 Button(
+                    colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.surface),
                     shape = RoundedCornerShape(30.dp),
-                    colors = ButtonDefaults.buttonColors(Color.White),
                     onClick = {
                         vm.saveContent()
                     }
                 ) {
-                    Text(
-                        color = Color.Black,
+                    PrimaryText(
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(start = 10.dp, end = 10.dp),
                         text = getString(R.string.ok)

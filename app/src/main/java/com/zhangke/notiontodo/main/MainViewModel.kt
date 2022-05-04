@@ -70,6 +70,7 @@ class MainViewModel : ViewModel() {
     private fun startSyncBlocks(pageId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val blockList = NotionRepo.queryAllBlocks(pageId)
+            NotionPageConfigRepo.deletePageAllBlock(pageId)
             NotionPageConfigRepo.insetBlocks(pageId, blockList)
         }
     }

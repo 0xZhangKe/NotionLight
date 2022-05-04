@@ -25,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
+import com.zhangke.architect.theme.PrimaryText
 import com.zhangke.framework.utils.toDp
 import com.zhangke.framework.utils.toast
 import com.zhangke.notionlib.R
@@ -104,7 +105,7 @@ class AuthorizationActivity : ComponentActivity() {
                 ),
             ) {
 
-                Text(
+                PrimaryText(
                     modifier = Modifier
                         .fillMaxWidth()
                         .offset(y = 15.dp),
@@ -131,7 +132,7 @@ class AuthorizationActivity : ComponentActivity() {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(
+            PrimaryText(
                 text = getString(R.string.notion_lib_auth_hint),
                 modifier = Modifier.padding(horizontal = 60.dp, vertical = 0.dp),
                 textAlign = TextAlign.Center,
@@ -139,7 +140,7 @@ class AuthorizationActivity : ComponentActivity() {
             Button(
                 modifier = Modifier.offset(y = 10.dp),
                 onClick = { vm.startAuth() }) {
-                Text(text = getString(R.string.notion_lib_auth_perform_button))
+                PrimaryText(text = getString(R.string.notion_lib_auth_perform_button))
             }
         }
     }
@@ -159,7 +160,7 @@ class AuthorizationActivity : ComponentActivity() {
             val hint = vm.authProcessInfo.observeAsState()
             if (!hint.value.isNullOrEmpty()) {
                 AnimatedContent(targetState = hint.value.orEmpty()) { targetHint ->
-                    Text(
+                    PrimaryText(
                         modifier = Modifier.offset(y = 10.dp),
                         text = targetHint
                     )
@@ -183,7 +184,7 @@ class AuthorizationActivity : ComponentActivity() {
             )
             val hint = vm.authProcessInfo.value
             if (!hint.isNullOrEmpty()) {
-                Text(
+                PrimaryText(
                     modifier = Modifier.offset(y = 10.dp),
                     text = hint
                 )

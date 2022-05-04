@@ -3,13 +3,13 @@ package com.zhangke.notiontodo.pagemanager
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -21,15 +21,16 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.zhangke.architect.activity.BaseActivity
+import com.zhangke.architect.theme.AppMaterialTheme
+import com.zhangke.architect.theme.PrimaryText
 import com.zhangke.notiontodo.R
-import com.zhangke.notiontodo.composable.AppMaterialTheme
 import kotlinx.coroutines.launch
 
-class PageManagerActivity : ComponentActivity() {
+class PageManagerActivity : BaseActivity() {
 
     companion object {
 
@@ -67,9 +68,8 @@ class PageManagerActivity : ComponentActivity() {
                         }
                     },
                     title = {
-                        Text(
+                        PrimaryText(
                             text = getString(R.string.page_manager_title),
-                            color = Color.Black,
                             fontSize = 18.sp,
                         )
                     },
@@ -83,7 +83,7 @@ class PageManagerActivity : ComponentActivity() {
                             )
                         }
                     },
-                    backgroundColor = MaterialTheme.colorScheme.surface
+                    backgroundColor = MaterialTheme.colorScheme.background
                 )
             }) {
 
@@ -95,9 +95,9 @@ class PageManagerActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize()
                 ) {
                     items(pageList.size) { index ->
-                        Card(
-                            elevation = CardDefaults.cardElevation(7.dp),
-                            containerColor = Color.White,
+                        Surface(
+                            shape = RoundedCornerShape(12.0.dp),
+                            shadowElevation = 12.dp,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 10.dp)
@@ -109,7 +109,7 @@ class PageManagerActivity : ComponentActivity() {
                                     .fillMaxSize()
                                     .padding(vertical = 5.dp)
                             ) {
-                                Text(
+                                PrimaryText(
                                     text = pageList[index].title,
                                     modifier = Modifier.padding(start = 20.dp)
                                 )

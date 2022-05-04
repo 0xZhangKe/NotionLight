@@ -46,7 +46,7 @@
                 android:id="@+id/tab_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:tabBackground="?attr/colorPrimaryVariant"
+                app:tabBackground="?android:attr/colorBackground"
                 app:tabIndicatorColor="?attr/colorOnPrimary"
                 app:tabRippleColor="?attr/colorOnSecondary"
                 app:tabSelectedTextColor="?android:attr/textColorPrimary"
@@ -65,7 +65,10 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="20dp"
-        android:layout_marginBottom="45dp"
+        android:layout_marginBottom="60dp"
+        android:backgroundTint="?attr/colorPrimary"
         android:contentDescription="@string/main_floating_desc"
-        android:src="@drawable/ic_baseline_add_24" />
+        app:tint="@color/white"
+        app:backgroundTint="?attr/colorPrimary"
+        app:srcCompat="@drawable/ic_baseline_add_24" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,28 +1,3 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Theme.NotionTodo" parent="Theme.MaterialComponents.DayNight">
-        <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/primary_day</item>
-        <item name="colorPrimaryVariant">@color/primary_variant_day</item>
-        <item name="colorOnPrimary">@color/on_primary_day</item>
-        <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/primary_variant_day</item>
-        <item name="colorSecondaryVariant">@color/primary_variant_day</item>
-        <item name="colorOnSecondary">@color/on_primary_secondary_day</item>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
-        <item name="android:windowLightStatusBar" tools:targetApi="M">true</item>
-        <!-- Customize your theme here. -->
 
-        <item name="android:textColorPrimary">@color/text_color_primary</item>
-        <item name="android:textColorSecondary">@color/text_color_secondary</item>
-
-        <item name="android:colorBackground">@color/primary_variant_day</item>
-<!--        <item name="colorOnBackground">@color/primary_on_day</item>-->
-<!--        <item name="colorSurface">@color/primary_variant_day</item>-->
-<!--        <item name="colorOnSurface">@color/primary_on_day</item>-->
-
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
 </resources>

@@ -35,7 +35,8 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.2.0-alpha04"
+        kotlinCompilerExtensionVersion = rootProject.ext.compose_version
+        kotlinCompilerVersion = rootProject.ext.kotlin_version
     }
 
     kotlinOptions {

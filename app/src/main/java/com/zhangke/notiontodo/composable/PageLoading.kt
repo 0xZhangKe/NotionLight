@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.zhangke.architect.theme.PrimaryText
 import com.zhangke.framework.utils.appContext
 import com.zhangke.notiontodo.R
 
@@ -26,7 +27,7 @@ fun PageLoading(hint: String? = appContext.getString(R.string.loading)) {
         )
         if (!hint.isNullOrEmpty()) {
             AnimatedContent(targetState = hint.orEmpty()) { targetHint ->
-                Text(
+                PrimaryText(
                     modifier = Modifier.offset(y = 10.dp),
                     text = targetHint
                 )

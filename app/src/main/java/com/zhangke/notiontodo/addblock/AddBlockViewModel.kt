@@ -11,7 +11,6 @@ import com.zhangke.notiontodo.R
 import com.zhangke.notiontodo.config.NotionPageConfig
 import com.zhangke.notiontodo.config.NotionPageConfigRepo
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class AddBlockViewModel : ViewModel() {
@@ -69,6 +68,7 @@ class AddBlockViewModel : ViewModel() {
             response.onError {
                 toast(it.message)
             }
+            NotionPageSyncHelper.sync(pageId)
         }
     }
 

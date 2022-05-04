@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.library'
-    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
 }
 
 android {
@@ -27,6 +28,14 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
+    buildFeatures {
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = rootProject.ext.compose_version
+        kotlinCompilerVersion = rootProject.ext.kotlin_version
+    }
 }
 
 dependencies {
@@ -34,12 +43,15 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
+    implementation compose.material
+    implementation compose.material3
     implementation compose.compiler
     implementation compose.ui
 
     implementation support.appcompat
     implementation support.'datastore-preferences'
     implementation support.datastore
+    implementation support.material
 
     implementation thirdparty.okhttp3
     implementation thirdparty.'okhttp3-logging'

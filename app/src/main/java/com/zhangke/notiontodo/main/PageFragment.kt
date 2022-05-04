@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -26,7 +27,8 @@ import com.zhangke.framework.utils.LoadingState
 import com.zhangke.notionlib.data.NotionBlock
 import com.zhangke.notionlib.ext.getSimpleText
 import com.zhangke.notiontodo.R
-import com.zhangke.notiontodo.composable.AppMaterialTheme
+import com.zhangke.architect.theme.AppMaterialTheme
+import com.zhangke.architect.theme.PrimaryText
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class PageFragment : Fragment() {
@@ -96,17 +98,18 @@ class PageFragment : Fragment() {
                     LazyColumn(
                         state = listState,
                         modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(bottom = 50.dp),
+                        contentPadding = PaddingValues(bottom = 50.dp, top = 20.dp),
                     ) {
                         items(blockList.size) { index ->
                             val item = blockList[index]
                             Surface(
+                                shape = RoundedCornerShape(3.dp),
                                 shadowElevation = 2.dp,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(15.dp, 10.dp, 15.dp, 10.dp)
+                                    .padding(25.dp, 10.dp, 25.dp, 10.dp)
                             ) {
-                                Text(
+                                PrimaryText(
                                     modifier = Modifier.padding(13.dp, 13.dp, 13.dp, 13.dp),
                                     text = item.childrenBlock?.getSimpleText().orEmpty()
                                 )

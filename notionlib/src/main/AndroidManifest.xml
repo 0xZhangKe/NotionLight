@@ -11,7 +11,7 @@
             android:name=".auth.AuthorizationActivity"
             android:exported="true"
             android:launchMode="singleTask"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            android:theme="@style/Theme.NotionTodo">
 
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

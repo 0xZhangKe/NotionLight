@@ -18,20 +18,20 @@ import coil.transform.CircleCropTransformation
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.zhangke.architect.daynight.DayNightHelper
 import com.zhangke.architect.rxjava.attachToLifecycle
 import com.zhangke.notiontodo.R
 import com.zhangke.notiontodo.addblock.AddBlockActivity
-import com.zhangke.notiontodo.pagemanager.AddPageActivity
 import com.zhangke.notiontodo.config.NotionPageConfig
+import com.zhangke.notiontodo.pagemanager.AddPageActivity
 import com.zhangke.notiontodo.setting.SettingActivity
 
 class MainActivity : AppCompatActivity() {
 
     private val viewModel: MainViewModel by viewModels()
 
-    private lateinit var accountItem: MenuItem
-
     override fun onCreate(savedInstanceState: Bundle?) {
+        DayNightHelper.setActivityDayNightMode(this)
         super.onCreate(savedInstanceState)
         //TODO 由于 Compose 的 TabLayout 比较拉，而且没有 ViewPager，这个页面暂时用xml写，后面改成Compose。
         setContentView(R.layout.activity_main)
@@ -66,22 +66,16 @@ class MainActivity : AppCompatActivity() {
                     initTabUi(tabLayout, viewPager, it)
                 }
             }
-        viewModel.getUserIcon()
-            .subscribe({
-                it.getOrNull()?.loadImageForAccount()
-            }, {
-                it.printStackTrace()
-            })
-            .attachToLifecycle(lifecycle)
     }
 
-    private fun String.loadImageForAccount() {
+    private fun String.loadImageForAccount(menuItem: MenuItem) {
         val request = ImageRequest.Builder(this@MainActivity)
             .lifecycle(lifecycle)
+            .size(150)
             .data(this)
             .transformations(CircleCropTransformation())
             .target {
-                accountItem.icon = it
+                menuItem.icon = it
             }
             .build()
         imageLoader.enqueue(request)
@@ -89,7 +83,14 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
-        accountItem = menu.findItem(R.id.account_item)!!
+        val menuItem = menu.findItem(R.id.account_item)!!
+        viewModel.getUserIcon()
+            .subscribe({
+                it.getOrNull()?.loadImageForAccount(menuItem)
+            }, {
+                it.printStackTrace()
+            })
+            .attachToLifecycle(lifecycle)
         return true
     }
 

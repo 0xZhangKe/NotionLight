@@ -1,4 +1,10 @@
 <resources>
     <string name="network_error">network error!</string>
     <string name="unknown_error">unknown error!</string>
+
+
+    <string name="setting_page_day_night_day">浅色模式</string>
+    <string name="setting_page_day_night_night">深色模式</string>
+    <string name="setting_page_day_night_system">跟随系统</string>
+
 </resources>

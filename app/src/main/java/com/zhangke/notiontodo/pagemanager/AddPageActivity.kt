@@ -26,15 +26,17 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
+import com.zhangke.architect.activity.BaseActivity
 import com.zhangke.framework.utils.toast
 import com.zhangke.notiontodo.R
-import com.zhangke.notiontodo.composable.AppMaterialTheme
+import com.zhangke.architect.theme.AppMaterialTheme
 import com.zhangke.notiontodo.composable.PageLoading
+import com.zhangke.architect.theme.PrimaryText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class AddPageActivity : ComponentActivity() {
+class AddPageActivity : BaseActivity() {
 
     private val vm: AddPageViewModel by viewModels()
 
@@ -84,14 +86,13 @@ class AddPageActivity : ComponentActivity() {
                             )
                         }
                     },
+                    backgroundColor = MaterialTheme.colorScheme.background,
                     title = {
-                        Text(
+                        PrimaryText(
                             text = getString(R.string.add_page_title),
-                            color = Color.Black,
                             fontSize = 18.sp,
                         )
                     },
-                    backgroundColor = MaterialTheme.colorScheme.surface
                 )
             }) {
             val loading = vm.loading.observeAsState(true)
@@ -125,9 +126,8 @@ class AddPageActivity : ComponentActivity() {
                                         checked = it
                                         item.added = checked
                                     })
-                                Text(
-                                    text = item.title,
-                                    color = Color.Black
+                                PrimaryText(
+                                    text = item.title
                                 )
                             }
                         }

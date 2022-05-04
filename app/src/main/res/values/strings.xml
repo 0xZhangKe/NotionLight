@@ -53,5 +53,9 @@
 
     <string name="setting_page_help_desc">关于使用中的问题</string>
 
+    <string name="setting_page_open_source">开源声明</string>
+
+    <string name="setting_page_open_source_desc">开源声明</string>
+
     <string name="page_manager_title">页面管理</string>
 </resources>

@@ -27,7 +27,8 @@
         <activity
             android:name=".addblock.AddBlockActivity"
             android:exported="true"
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.NotionTodo.Transparent" />
 
         <activity
             android:name=".setting.SettingActivity"
