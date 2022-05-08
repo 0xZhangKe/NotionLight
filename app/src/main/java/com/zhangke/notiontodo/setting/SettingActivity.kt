@@ -33,6 +33,7 @@ import com.zhangke.architect.theme.AppMaterialTheme
 import com.zhangke.architect.theme.PrimaryText
 import com.zhangke.architect.theme.SecondaryText
 import com.zhangke.notiontodo.R
+import com.zhangke.notiontodo.code.OpenSourceActivity
 import com.zhangke.notiontodo.pagemanager.PageManagerActivity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -63,32 +64,6 @@ class SettingActivity : BaseActivity() {
     fun Page(vm: SettingViewModel) {
         val coroutineScope = rememberCoroutineScope()
         Scaffold {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 15.dp, top = 15.dp, end = 15.dp)
-            ) {
-                IconButton(
-                    onClick = { finish() }
-                ) {
-                    Icon(
-                        painter = rememberVectorPainter(image = Icons.Filled.ArrowBack),
-                        "back"
-                    )
-                }
-
-                Spacer(modifier = Modifier.weight(1F))
-
-                IconButton(
-                    onClick = { finish() }
-                ) {
-                    Icon(
-                        painter = rememberVectorPainter(image = Icons.Filled.PowerSettingsNew),
-                        "login out",
-                    )
-                }
-            }
-
             Column(
                 modifier = Modifier
                     .verticalScroll(rememberScrollState())
@@ -224,7 +199,7 @@ class SettingActivity : BaseActivity() {
 
                 CreateSettingLine(
                     modifier = Modifier.clickable {
-
+                        vm.openAppMarket(this@SettingActivity)
                     },
                     icon = Icons.Filled.ArrowBack,
                     title = getString(R.string.setting_page_appraise),
@@ -251,12 +226,38 @@ class SettingActivity : BaseActivity() {
 
                 CreateSettingLine(
                     modifier = Modifier.clickable {
-
+                        OpenSourceActivity.open(this@SettingActivity)
                     },
                     icon = Icons.Filled.ArrowBack,
                     title = getString(R.string.setting_page_open_source),
                     subtitle = getString(R.string.setting_page_open_source_desc)
                 )
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 15.dp, top = 15.dp, end = 15.dp)
+            ) {
+                IconButton(
+                    onClick = { finish() }
+                ) {
+                    Icon(
+                        painter = rememberVectorPainter(image = Icons.Filled.ArrowBack),
+                        "back"
+                    )
+                }
+
+                Spacer(modifier = Modifier.weight(1F))
+
+                IconButton(
+                    onClick = { finish() }
+                ) {
+                    Icon(
+                        painter = rememberVectorPainter(image = Icons.Filled.PowerSettingsNew),
+                        "login out",
+                    )
+                }
             }
         }
     }

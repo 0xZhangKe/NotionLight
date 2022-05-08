@@ -10,9 +10,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.*
@@ -23,11 +21,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.zhangke.architect.activity.BaseActivity
 import com.zhangke.architect.theme.AppMaterialTheme
 import com.zhangke.architect.theme.PrimaryText
 import com.zhangke.notiontodo.R
+import com.zhangke.notiontodo.composable.Toolbar
 import kotlinx.coroutines.launch
 
 class PageManagerActivity : BaseActivity() {
@@ -58,21 +56,9 @@ class PageManagerActivity : BaseActivity() {
         val listState: LazyListState = rememberLazyListState()
         Scaffold(
             topBar = {
-                TopAppBar(
-                    navigationIcon = {
-                        IconButton(onClick = { finish() }) {
-                            Icon(
-                                painter = rememberVectorPainter(image = Icons.Filled.ArrowBack),
-                                "back"
-                            )
-                        }
-                    },
-                    title = {
-                        PrimaryText(
-                            text = getString(R.string.page_manager_title),
-                            fontSize = 18.sp,
-                        )
-                    },
+                Toolbar(
+                    title = getString(R.string.page_manager_title),
+                    navigationBackClick = { finish() },
                     actions = {
                         IconButton(onClick = {
                             AddPageActivity.open(this@PageManagerActivity)
@@ -82,11 +68,9 @@ class PageManagerActivity : BaseActivity() {
                                 contentDescription = "add new page"
                             )
                         }
-                    },
-                    backgroundColor = MaterialTheme.colorScheme.background
+                    }
                 )
             }) {
-
             val pageList = viewModel.pageConfigList.observeAsState().value
             if (!pageList.isNullOrEmpty()) {
                 LazyColumn(

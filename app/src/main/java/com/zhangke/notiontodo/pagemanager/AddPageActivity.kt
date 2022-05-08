@@ -3,7 +3,6 @@ package com.zhangke.notiontodo.pagemanager
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.clickable
@@ -12,9 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -24,17 +21,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.lifecycle.lifecycleScope
 import com.zhangke.architect.activity.BaseActivity
-import com.zhangke.framework.utils.toast
-import com.zhangke.notiontodo.R
 import com.zhangke.architect.theme.AppMaterialTheme
-import com.zhangke.notiontodo.composable.PageLoading
 import com.zhangke.architect.theme.PrimaryText
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.zhangke.notiontodo.R
+import com.zhangke.notiontodo.composable.PageLoading
+import com.zhangke.notiontodo.composable.Toolbar
 
 class AddPageActivity : BaseActivity() {
 
@@ -59,25 +51,15 @@ class AddPageActivity : BaseActivity() {
     fun PageScreen(vm: AddPageViewModel) {
         Scaffold(
             topBar = {
-                TopAppBar(
-                    navigationIcon = {
-                        IconButton(onClick = { finish() }) {
-                            Icon(
-                                painter = rememberVectorPainter(image = Icons.Filled.ArrowBack),
-                                "back"
-                            )
-                        }
+                Toolbar(
+                    title = getString(R.string.add_page_title),
+                    navigationBackClick = {
+                        finish()
                     },
                     actions = {
                         IconButton(
                             onClick = {
-                                lifecycleScope.launch {
-                                    vm.savePage()
-                                    withContext(Dispatchers.Main) {
-                                        toast(R.string.page_add_success)
-                                        finish()
-                                    }
-                                }
+
                             }
                         ) {
                             Icon(
@@ -85,14 +67,7 @@ class AddPageActivity : BaseActivity() {
                                 contentDescription = "save"
                             )
                         }
-                    },
-                    backgroundColor = MaterialTheme.colorScheme.background,
-                    title = {
-                        PrimaryText(
-                            text = getString(R.string.add_page_title),
-                            fontSize = 18.sp,
-                        )
-                    },
+                    }
                 )
             }) {
             val loading = vm.loading.observeAsState(true)

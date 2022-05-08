@@ -37,6 +37,10 @@
         <activity
             android:name=".pagemanager.PageManagerActivity"
             android:exported="true" />
+
+        <activity
+            android:name=".code.OpenSourceActivity"
+            android:exported="true" />
     </application>
 
 </manifest>
