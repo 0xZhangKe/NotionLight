@@ -72,6 +72,7 @@ class PageFragment : Fragment() {
     fun PageContent(blockFlow: MutableStateFlow<DataWithLoading<List<NotionBlock>>>) {
         val blockListWithLoading = blockFlow.collectAsState().value
         val state = blockListWithLoading.state
+        if (state == LoadingState.IDLE) return
         val refreshing = state == LoadingState.LOADING
         val listState: LazyListState = rememberLazyListState()
         when (state) {

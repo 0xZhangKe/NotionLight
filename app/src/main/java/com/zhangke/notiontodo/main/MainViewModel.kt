@@ -44,14 +44,18 @@ class MainViewModel : ViewModel() {
 
     fun getPageBlockList(pageId: String): MutableStateFlow<DataWithLoading<List<NotionBlock>>> {
         val blockListFlow = blockFlowToPageMap.getOrPut(pageId) {
-            MutableStateFlow(DataWithLoading.loading())
+            MutableStateFlow(DataWithLoading.idle())
         }
         viewModelScope.launch(Dispatchers.IO) {
-            blockListFlow.emit(DataWithLoading.loading())
             NotionPageConfigRepo.getBlockWithPageId(pageId)
                 .catch { blockListFlow.emit(DataWithLoading.failed(exception = it)) }
                 .collect {
-                    blockListFlow.emit(DataWithLoading.success(it))
+                    val lastList = blockListFlow.value.data
+                    // 由于下面的startSyncBlocks方法会先清空数据库再写入，所以这里在同步后会触发两次（包含一次空列表），
+                    // 因此直接对比list会失效，这里先这么苟着，问题不大。
+                    if (lastList != it && it.isNotEmpty()) {
+                        blockListFlow.emit(DataWithLoading.success(it))
+                    }
                 }
         }
         startSyncBlocks(pageId)
