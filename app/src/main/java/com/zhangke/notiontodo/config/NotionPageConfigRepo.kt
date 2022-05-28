@@ -30,7 +30,14 @@ object NotionPageConfigRepo {
     suspend fun insetBlocks(pageId: String, block: List<NotionBlock>) {
         NotionPageDataBase.instance
             .blockInPageDao()
-            .insetBlocks(block.map { NotionBlockInPage(it.id, pageId, it) })
+            .insetBlocks(block.map {
+                NotionBlockInPage(
+                    it.id,
+                    pageId,
+                    System.currentTimeMillis(),
+                    it
+                )
+            })
     }
 
     suspend fun getBlockWithPageId(id: String): Flow<List<NotionBlock>> {
@@ -47,5 +54,13 @@ object NotionPageConfigRepo {
         NotionPageDataBase.instance
             .blockInPageDao()
             .deletePageAllBlock(pageId)
+    }
+
+    suspend fun queryLatestBlockWithPageIdByTime(
+        pageId: String,
+    ): List<NotionBlockInPage> {
+        return NotionPageDataBase.instance
+            .blockInPageDao()
+            .queryLatestBlockWithPageIdByTime(pageId, 20)
     }
 }

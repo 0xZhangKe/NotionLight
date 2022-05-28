@@ -21,12 +21,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.lifecycleScope
 import com.zhangke.architect.activity.BaseActivity
 import com.zhangke.architect.theme.AppMaterialTheme
 import com.zhangke.architect.theme.PrimaryText
+import com.zhangke.framework.utils.toast
 import com.zhangke.notiontodo.R
 import com.zhangke.notiontodo.composable.PageLoading
 import com.zhangke.notiontodo.composable.Toolbar
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AddPageActivity : BaseActivity() {
 
@@ -59,7 +64,13 @@ class AddPageActivity : BaseActivity() {
                     actions = {
                         IconButton(
                             onClick = {
-
+                                lifecycleScope.launch {
+                                    vm.savePage()
+                                    withContext(Dispatchers.Main) {
+                                        toast(R.string.page_add_success)
+                                        finish()
+                                    }
+                                }
                             }
                         ) {
                             Icon(

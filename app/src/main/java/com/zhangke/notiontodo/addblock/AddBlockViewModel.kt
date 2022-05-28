@@ -10,8 +10,10 @@ import com.zhangke.notionlib.data.block.BlockType
 import com.zhangke.notiontodo.R
 import com.zhangke.notiontodo.config.NotionPageConfig
 import com.zhangke.notiontodo.config.NotionPageConfigRepo
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AddBlockViewModel : ViewModel() {
 
@@ -82,6 +84,33 @@ class AddBlockViewModel : ViewModel() {
                     it.id == targetPageId
                 }
             }
-        currentBlockType.value = currentPage.value?.type
+        currentPage.value?.computeBlockType()
+    }
+
+    private fun NotionPageConfig.computeBlockType() {
+        viewModelScope.launch {
+            val type = withContext(Dispatchers.IO) {
+                val latestBlockList = try {
+                    NotionPageConfigRepo.queryLatestBlockWithPageIdByTime(id)
+                } catch (e: Exception) {
+                    return@withContext null
+                }
+                val typeToCount = mutableMapOf<String, Int>()
+                latestBlockList.forEach {
+                    val count = typeToCount[it.notionBlock.type] ?: 0
+                    typeToCount[it.notionBlock.type] = count + 1
+                }
+                var maxCount = -1
+                var type = BlockType.PARAGRAPH
+                typeToCount.entries.forEach {
+                    if (it.value > maxCount) {
+                        maxCount = it.value
+                        type = it.key
+                    }
+                }
+                type
+            }
+            currentBlockType.value = type
+        }
     }
 }

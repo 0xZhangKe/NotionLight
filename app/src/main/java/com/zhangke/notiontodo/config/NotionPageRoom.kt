@@ -16,13 +16,13 @@ private const val BLOCK_TABLE_NAME = "notion_page_block"
 data class NotionPageConfig(
     @PrimaryKey val id: String,
     val title: String,
-    val type: String,
 )
 
 @Entity(tableName = BLOCK_TABLE_NAME)
 data class NotionBlockInPage(
     @PrimaryKey val id: String,
     val pageId: String,
+    val editTimestamp: Long,
     val notionBlock: NotionBlock,
 )
 
@@ -50,6 +50,9 @@ interface NotionBlockInPageDao {
 
     @Query("SELECT * FROM $BLOCK_TABLE_NAME WHERE pageId == :pageId")
     fun queryBlockWithPageId(pageId: String): Flow<List<NotionBlockInPage>>
+
+    @Query("SELECT * FROM $BLOCK_TABLE_NAME WHERE pageId == :pageId ORDER BY editTimestamp DESC LIMIT :count OFFSET 0")
+    suspend fun queryLatestBlockWithPageIdByTime(pageId: String, count: Int): List<NotionBlockInPage>
 
     @Query("DELETE FROM $BLOCK_TABLE_NAME WHERE pageId == :pageId")
     suspend fun deletePageAllBlock(pageId: String)

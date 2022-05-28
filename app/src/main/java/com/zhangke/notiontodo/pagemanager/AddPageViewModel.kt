@@ -67,8 +67,7 @@ class AddPageViewModel : ViewModel() {
     private fun NotionPage.convertToPageConfig(): NotionPageConfig {
         return NotionPageConfig(
             id = id,
-            title = getTitle(),
-            type = BlockType.CALLOUT
+            title = getTitle()
         )
     }
 
