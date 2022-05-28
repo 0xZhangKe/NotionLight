@@ -1,5 +1,6 @@
 package com.zhangke.notionlib
 
+import com.google.gson.JsonObject
 import com.zhangke.notionlib.auth.NotionTodoIntegrationConfig
 import com.zhangke.notionlib.data.NotionBlock
 import com.zhangke.notionlib.data.NotionListEntry
@@ -43,4 +44,15 @@ interface NotionApi {
         @Path("block_id") blockId: String,
         @Body body: RequestBody
     ): NotionResponse<NotionListEntry<NotionBlock>>
+
+    @Headers("Notion-Version: 2022-02-22")
+    @DELETE("v1/blocks/{block_id}")
+    suspend fun deleteBlock(@Path("block_id") blockId: String): NotionResponse<JsonObject>
+
+    @Headers("Accept: application/json", "Notion-Version: 2022-02-22")
+    @PATCH("v1/blocks/{block_id}")
+    suspend fun updateBlock(
+        @Path("block_id") blockId: String,
+        @Body body: RequestBody
+    ): NotionResponse<NotionBlock>
 }

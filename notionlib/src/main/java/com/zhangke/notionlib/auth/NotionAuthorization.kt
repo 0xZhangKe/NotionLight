@@ -6,6 +6,7 @@ import com.zhangke.architect.coroutines.ApplicationScope
 import com.zhangke.architect.datastore.dataStore
 import com.zhangke.architect.datastore.getString
 import com.zhangke.architect.datastore.putString
+import com.zhangke.architect.datastore.removeString
 import com.zhangke.framework.utils.appContext
 import com.zhangke.framework.utils.sharedGson
 import com.zhangke.framework.utils.toast
@@ -13,7 +14,9 @@ import com.zhangke.notionlib.NotionRepo
 import com.zhangke.notionlib.data.OauthToken
 import io.reactivex.rxjava3.subjects.SingleSubject
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
 object NotionAuthorization {
@@ -25,6 +28,8 @@ object NotionAuthorization {
     private var token: OauthToken? = null
 
     val readTokenSubject: SingleSubject<Boolean> = SingleSubject.create()
+
+    val loginStateFlow = MutableSharedFlow<Boolean>()
 
     private const val OAUTH_TOKEN_KEY = "oauth_token"
 
@@ -42,10 +47,19 @@ object NotionAuthorization {
         return token
     }
 
+    fun logout() {
+        this.token = null
+        runBlocking {
+            appContext.dataStore.removeString(OAUTH_TOKEN_KEY)
+            loginStateFlow.emit(false)
+        }
+    }
+
     private suspend fun saveOauthToken(token: OauthToken) {
         this.token = token
         val json = sharedGson.toJson(token)
         appContext.dataStore.putString(OAUTH_TOKEN_KEY, json)
+        loginStateFlow.emit(true)
     }
 
     fun showAuthPage() {

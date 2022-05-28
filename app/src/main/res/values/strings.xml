@@ -5,6 +5,8 @@
 
     <string name="ok">确定</string>
 
+    <string name="copy">复制</string>
+
     <string name="error_app_market_not_found">未找到应用市场</string>
 
     <string name="add_page_guid">暂无内容，请添加</string>
@@ -12,6 +14,10 @@
     <string name="add_page_title">添加页面</string>
 
     <string name="page_add_success">添加成功</string>
+
+    <string name="block_dialog_edit">修改</string>
+
+    <string name="block_dialog_remove">删除</string>
 
     <string name="loading">加载中…</string>
 
@@ -32,6 +38,10 @@
     <string name="edit_page">编辑页面</string>
 
     <string name="setting_page_title">设置</string>
+
+    <string name="setting_not_login">当前未登陆</string>
+
+    <string name="setting_logout_dialog_title">确认退出登陆？</string>
 
     <string name="setting_page_manager">页面管理</string>
 
@@ -62,4 +72,8 @@
     <string name="page_manager_title">页面管理</string>
 
     <string name="open_source_page_title">开源声明</string>
+
+    <string name="edit_block_page_title">修改内容</string>
+
+    <string name="edit_block_success">修改成功</string>
 </resources>

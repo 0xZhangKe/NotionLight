@@ -35,3 +35,10 @@ suspend fun DataStore<Preferences>.getString(key: String): String? {
     val preferenceKey = stringPreferencesKey(key)
     return data.firstOrNull()?.get(preferenceKey)
 }
+
+suspend fun DataStore<Preferences>.removeString(key: String) {
+    val preferenceKey = stringPreferencesKey(key)
+    edit {
+        it.remove(preferenceKey)
+    }
+}

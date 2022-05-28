@@ -41,6 +41,11 @@
         <activity
             android:name=".code.OpenSourceActivity"
             android:exported="true" />
+
+        <activity
+            android:name=".editblock.EditBlockActivity"
+            android:exported="true"
+            android:theme="@style/Theme.NotionTodo.Transparent" />
     </application>
 
 </manifest>

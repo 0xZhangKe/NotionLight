@@ -13,14 +13,16 @@ import com.zhangke.architect.daynight.DayNightMode
 import com.zhangke.framework.utils.appContext
 import com.zhangke.framework.utils.toast
 import com.zhangke.notionlib.auth.NotionAuthorization
+import com.zhangke.notionlib.data.OauthToken
 import com.zhangke.notiontodo.R
+import com.zhangke.notiontodo.config.NotionPageConfigRepo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class SettingViewModel : ViewModel() {
 
-    val userInfo = NotionAuthorization.getOauthToken()
+    val userInfo = MutableLiveData<OauthToken?>(NotionAuthorization.getOauthToken())
 
     val currentDayNightMode = MutableLiveData<DayNightMode>()
 
@@ -38,6 +40,11 @@ class SettingViewModel : ViewModel() {
                         currentDayNightMode.value = it
                     }
                 }
+        }
+        viewModelScope.launch {
+            NotionAuthorization.loginStateFlow.collect {
+                userInfo.value = NotionAuthorization.getOauthToken()
+            }
         }
     }
 
@@ -63,6 +70,13 @@ class SettingViewModel : ViewModel() {
             activity.startActivity(intent)
         } catch (e: ActivityNotFoundException) {
             toast(R.string.error_app_market_not_found)
+        }
+    }
+
+    fun logout(){
+        NotionAuthorization.logout()
+        viewModelScope.launch {
+            NotionPageConfigRepo.nuke()
         }
     }
 }

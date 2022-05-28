@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -19,7 +20,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.zhangke.architect.daynight.DayNightHelper
-import com.zhangke.architect.rxjava.attachToLifecycle
 import com.zhangke.notiontodo.R
 import com.zhangke.notiontodo.addblock.AddBlockActivity
 import com.zhangke.notiontodo.config.NotionPageConfig
@@ -84,13 +84,17 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
         val menuItem = menu.findItem(R.id.account_item)!!
-        viewModel.getUserIcon()
-            .subscribe({
-                it.getOrNull()?.loadImageForAccount(menuItem)
-            }, {
-                it.printStackTrace()
-            })
-            .attachToLifecycle(lifecycle)
+        viewModel.userIcon
+            .observe(this) {
+                if (it != null) {
+                    it.loadImageForAccount(menuItem)
+                } else {
+                    menuItem.icon = AppCompatResources.getDrawable(
+                        this,
+                        R.drawable.ic_baseline_account_circle_24
+                    )
+                }
+            }
         return true
     }
 

@@ -10,6 +10,7 @@ import com.zhangke.notionlib.data.block.BlockType
 import com.zhangke.notiontodo.R
 import com.zhangke.notiontodo.config.NotionPageConfig
 import com.zhangke.notiontodo.config.NotionPageConfigRepo
+import com.zhangke.notiontodo.support.supportedEditType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
@@ -22,11 +23,7 @@ class AddBlockViewModel : ViewModel() {
 
     val currentInputText = MutableLiveData<String>()
 
-    val blockTypeList = listOf(
-        BlockType.CALLOUT,
-        BlockType.PARAGRAPH,
-        BlockType.TODO
-    )
+    val blockTypeList = supportedEditType
 
     var onAddSuccess: (() -> Unit)? = null
 
@@ -66,11 +63,11 @@ class AddBlockViewModel : ViewModel() {
             val response = NotionRepo.appendBlock(inputtedText, pageId, blockType)
             response.onSuccess {
                 onAddSuccess?.invoke()
+                NotionPageSyncHelper.sync(pageId)
             }
             response.onError {
                 toast(it.message)
             }
-            NotionPageSyncHelper.sync(pageId)
         }
     }
 

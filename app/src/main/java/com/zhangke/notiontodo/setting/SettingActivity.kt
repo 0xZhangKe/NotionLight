@@ -5,12 +5,14 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.material3.*
@@ -21,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -72,47 +75,67 @@ class SettingActivity : BaseActivity() {
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
 
+                val userInfo = vm.userInfo.observeAsState().value
                 Surface(
                     shadowElevation = 10.dp,
                     shape = CircleShape
                 ) {
-                    AsyncImage(
-                        model = ImageRequest.Builder(this@SettingActivity)
-                            .data(vm.userInfo?.workspaceIcon)
-                            .transformations(CircleCropTransformation())
-                            .build(),
-                        contentDescription = "workspace icon",
-                        modifier = Modifier
-                            .size(90.dp)
-                    )
+                    if (userInfo == null) {
+                        Image(
+                            modifier = Modifier
+                                .size(90.dp),
+                            alpha = 0.5F,
+                            painter = painterResource(R.drawable.ic_baseline_account_circle_24),
+                            contentDescription = "workspace icon"
+                        )
+                    } else {
+                        AsyncImage(
+                            model = ImageRequest.Builder(this@SettingActivity)
+                                .data(userInfo.workspaceIcon)
+                                .transformations(CircleCropTransformation())
+                                .build(),
+                            contentDescription = "workspace icon",
+                            modifier = Modifier
+                                .size(90.dp)
+                        )
+                    }
                 }
 
-                PrimaryText(
-                    text = "Zhangke's WorkSpace",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 22.sp,
-                    modifier = Modifier.padding(top = 10.dp)
-                )
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(top = 5.dp)
-                ) {
-                    SecondaryText(
-                        text = "created by zhangke",
-                        color = Color.Gray,
-                        fontSize = 18.sp
+                if (userInfo != null) {
+                    val ownerName = userInfo.owner.user.name
+                    PrimaryText(
+                        text = userInfo.workspaceName ?: "$ownerName's WorkSpace",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 22.sp,
+                        modifier = Modifier.padding(top = 10.dp)
                     )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(top = 5.dp)
+                    ) {
+                        SecondaryText(
+                            text = "created by $ownerName",
+                            color = Color.Gray,
+                            fontSize = 18.sp
+                        )
 
-                    AsyncImage(
-                        model = ImageRequest.Builder(this@SettingActivity)
-                            .data(vm.userInfo?.workspaceIcon)
-                            .transformations(CircleCropTransformation())
-                            .build(),
-                        contentDescription = "workspace icon",
-                        modifier = Modifier
-                            .padding(start = 5.dp)
-                            .size(20.dp)
+                        AsyncImage(
+                            model = ImageRequest.Builder(this@SettingActivity)
+                                .data(userInfo.workspaceIcon)
+                                .transformations(CircleCropTransformation())
+                                .build(),
+                            contentDescription = "workspace icon",
+                            modifier = Modifier
+                                .padding(start = 5.dp)
+                                .size(20.dp)
+                        )
+                    }
+                } else {
+                    PrimaryText(
+                        text = getString(R.string.setting_not_login),
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 20.sp,
+                        modifier = Modifier.padding(top = 10.dp)
                     )
                 }
 
@@ -250,8 +273,41 @@ class SettingActivity : BaseActivity() {
 
                 Spacer(modifier = Modifier.weight(1F))
 
+                var showLogoutDialog by remember { mutableStateOf(false) }
+                if (showLogoutDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showLogoutDialog = false },
+                        title = {
+                            PrimaryText(
+                                text = getString(R.string.setting_logout_dialog_title),
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Medium,
+                            )
+                        },
+                        dismissButton = {
+                            Button(onClick = {
+                                showLogoutDialog = false
+                            }) {
+                                PrimaryText(
+                                    text = getString(R.string.cancel),
+                                )
+                            }
+                        },
+                        confirmButton = {
+                            Button(onClick = {
+                                showLogoutDialog = false
+                                vm.logout()
+                            }) {
+                                PrimaryText(
+                                    text = getString(R.string.ok),
+                                )
+                            }
+                        }
+                    )
+                }
+
                 IconButton(
-                    onClick = { finish() }
+                    onClick = { showLogoutDialog = true }
                 ) {
                     Icon(
                         painter = rememberVectorPainter(image = Icons.Filled.PowerSettingsNew),

@@ -63,4 +63,19 @@ object NotionPageConfigRepo {
             .blockInPageDao()
             .queryLatestBlockWithPageIdByTime(pageId, 20)
     }
+
+    suspend fun queryBlock(blockId: String): NotionBlockInPage? {
+        return NotionPageDataBase.instance
+            .blockInPageDao()
+            .queryBlock(blockId)
+    }
+
+    suspend fun nuke(){
+        NotionPageDataBase.instance
+            .pageConfigDao()
+            .nukeTable()
+        NotionPageDataBase.instance
+            .blockInPageDao()
+            .nukeTable()
+    }
 }

@@ -20,7 +20,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/add_icon"
@@ -68,7 +69,7 @@
         android:layout_marginBottom="60dp"
         android:backgroundTint="?attr/colorPrimary"
         android:contentDescription="@string/main_floating_desc"
-        app:tint="@color/white"
         app:backgroundTint="?attr/colorPrimary"
-        app:srcCompat="@drawable/ic_baseline_add_24" />
+        app:srcCompat="@drawable/ic_baseline_add_24"
+        app:tint="@color/white" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

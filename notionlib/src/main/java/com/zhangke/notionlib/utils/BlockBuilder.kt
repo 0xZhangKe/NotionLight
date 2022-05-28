@@ -3,11 +3,10 @@ package com.zhangke.notionlib.utils
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.zhangke.framework.utils.sharedGson
+import com.zhangke.notionlib.data.NotionBlock
 import com.zhangke.notionlib.data.RichText
 import com.zhangke.notionlib.data.TextAnnotations
-import com.zhangke.notionlib.data.block.CalloutBlock
-import com.zhangke.notionlib.data.block.ParagraphBlock
-import com.zhangke.notionlib.data.block.TodoBlock
+import com.zhangke.notionlib.data.block.*
 
 object BlockBuildHelper {
 
@@ -18,6 +17,20 @@ object BlockBuildHelper {
         code = false,
         color = "default"
     )
+
+    fun buildUpdateContent(block: NotionBlock, content: String): JsonObject {
+        return JsonObject().apply {
+            add(block.type, JsonObject().apply {
+                add("rich_text", JsonArray().apply {
+                    add(JsonObject().apply {
+                        add("text", JsonObject().apply {
+                            addProperty("content", content)
+                        })
+                    })
+                })
+            })
+        }
+    }
 
     fun build(type: String, text: String): JsonObject {
         return JsonObject().apply {
@@ -38,6 +51,12 @@ object BlockBuildHelper {
             TodoBlock.TYPE -> text.toTodoBlock()
             CalloutBlock.TYPE -> text.toCalloutBlock()
             ParagraphBlock.TYPE -> text.toParagraphBlock()
+            HeadingBlock.TYPE_1 -> text.toParagraphBlock()
+            HeadingBlock.TYPE_2 -> text.toParagraphBlock()
+            HeadingBlock.TYPE_3 -> text.toParagraphBlock()
+            BulletedListItemBlock.TYPE -> text.toParagraphBlock()
+            NumberListItemBlock.TYPE -> text.toParagraphBlock()
+            QuoteBlock.TYPE -> text.toParagraphBlock()
             else -> throw UnsupportedOperationException("unsupported type: $type")
         }
         return sharedGson.fromJson(sharedGson.toJson(block), JsonObject::class.java)

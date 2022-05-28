@@ -71,6 +71,16 @@ object NotionRepo {
         return notionApi.queryBlock(blockId, 100, startCursor)
     }
 
+    suspend fun deleteBlock(blockId: String): NotionResponse<JsonObject> {
+        return notionApi.deleteBlock(blockId)
+    }
+
+    suspend fun updateBlock(block: NotionBlock, content: String): NotionResponse<NotionBlock> {
+        val json = BlockBuildHelper.buildUpdateContent(block, content)
+        val body = json.toString().toRequestBody("application/json".toMediaType())
+        return notionApi.updateBlock(block.id, body)
+    }
+
     private inline fun <T> loadAllPage(loader: (String?) -> NotionResponse<NotionListEntry<T>>): List<T> {
         var hasMore = true
         var startCursor: String? = null

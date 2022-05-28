@@ -5,30 +5,38 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import com.zhangke.architect.theme.AppMaterialTheme
+import com.zhangke.architect.theme.PrimaryText
 import com.zhangke.framework.utils.DataWithLoading
 import com.zhangke.framework.utils.LoadingState
 import com.zhangke.notionlib.data.NotionBlock
-import com.zhangke.notionlib.ext.getSimpleText
+import com.zhangke.notionlib.ext.getLightText
 import com.zhangke.notiontodo.R
-import com.zhangke.architect.theme.AppMaterialTheme
-import com.zhangke.architect.theme.PrimaryText
+import com.zhangke.notiontodo.editblock.EditBlockActivity
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class PageFragment : Fragment() {
@@ -75,6 +83,13 @@ class PageFragment : Fragment() {
         if (state == LoadingState.IDLE) return
         val refreshing = state == LoadingState.LOADING
         val listState: LazyListState = rememberLazyListState()
+        val showBlockColumnDialog = remember { mutableStateOf(false) }
+        val currentItem = remember { mutableStateOf<NotionBlock?>(null) }
+        if (showBlockColumnDialog.value) {
+            BlockColumnDialog(currentItem.value!!) {
+                showBlockColumnDialog.value = false
+            }
+        }
         when (state) {
             LoadingState.FAILED -> {
                 Box(
@@ -108,15 +123,79 @@ class PageFragment : Fragment() {
                                 shadowElevation = 2.dp,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(25.dp, 10.dp, 25.dp, 10.dp)
+                                    .padding(25.dp, 7.dp, 25.dp, 7.dp)
+                                    .clickable {
+                                        currentItem.value = item
+                                        showBlockColumnDialog.value = true
+                                    }
                             ) {
                                 PrimaryText(
                                     modifier = Modifier.padding(13.dp, 13.dp, 13.dp, 13.dp),
-                                    text = item.childrenBlock?.getSimpleText().orEmpty()
+                                    text = item.getLightText().orEmpty()
                                 )
                             }
                         }
                     }
+                }
+            }
+        }
+    }
+
+    @Composable
+    fun BlockColumnDialog(block: NotionBlock, onDismissRequest: () -> Unit) {
+        Dialog(
+            onDismissRequest = onDismissRequest
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.background, RoundedCornerShape(8.dp))
+            ) {
+                Surface(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            viewModel.copy(block)
+                            onDismissRequest()
+                        }
+                        .padding(25.dp, 10.dp, 25.dp, 10.dp)
+                ) {
+                    PrimaryText(
+                        modifier = Modifier.padding(13.dp, 13.dp, 13.dp, 13.dp),
+                        text = getString(R.string.copy)
+                    )
+                }
+
+                if (viewModel.isBlockSupportEdit(block)) {
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                EditBlockActivity.open(requireActivity(), pageId, block)
+                                onDismissRequest()
+                            }
+                            .padding(25.dp, 10.dp, 25.dp, 10.dp)
+                    ) {
+                        PrimaryText(
+                            modifier = Modifier.padding(13.dp, 13.dp, 13.dp, 13.dp),
+                            text = getString(R.string.block_dialog_edit)
+                        )
+                    }
+                }
+
+                Surface(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            viewModel.delete(block, pageId)
+                            onDismissRequest()
+                        }
+                        .padding(25.dp, 10.dp, 25.dp, 10.dp)
+                ) {
+                    PrimaryText(
+                        modifier = Modifier.padding(13.dp, 13.dp, 13.dp, 13.dp),
+                        text = getString(R.string.block_dialog_remove)
+                    )
                 }
             }
         }

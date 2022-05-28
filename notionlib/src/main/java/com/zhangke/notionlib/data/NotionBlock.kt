@@ -53,6 +53,8 @@ class NotionBlockTypeAdapter : JsonSerializer<NotionBlock>, JsonDeserializer<Not
         typedClassMap[HeadingBlock.TYPE_3] = HeadingBlock::class.java
         typedClassMap[CalloutBlock.TYPE] = CalloutBlock::class.java
         typedClassMap[QuoteBlock.TYPE] = QuoteBlock::class.java
+        typedClassMap[NumberListItemBlock.TYPE] = NumberListItemBlock::class.java
+        typedClassMap[BulletedListItemBlock.TYPE] = BulletedListItemBlock::class.java
     }
 
     override fun serialize(

@@ -92,7 +92,6 @@ class AddPageActivity : BaseActivity() {
                 ) {
                     items(list.size) { index ->
                         val item = list[index]
-                        val page = item.page
                         var checked: Boolean by remember {
                             mutableStateOf(item.added)
                         }

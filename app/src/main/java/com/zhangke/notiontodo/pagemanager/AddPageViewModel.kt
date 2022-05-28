@@ -5,13 +5,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zhangke.notionlib.NotionRepo
 import com.zhangke.notionlib.data.NotionPage
-import com.zhangke.notionlib.data.block.BlockType
 import com.zhangke.notionlib.ext.getSimpleText
 import com.zhangke.notiontodo.config.NotionPageConfig
 import com.zhangke.notiontodo.config.NotionPageConfigRepo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

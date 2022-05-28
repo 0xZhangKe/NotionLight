@@ -40,6 +40,9 @@ interface NotionPageConfigDao {
 
     @Delete
     suspend fun deletePage(config: List<NotionPageConfig>)
+
+    @Query("DELETE FROM $CONFIG_TABLE_NAME")
+    suspend fun nukeTable()
 }
 
 @Dao
@@ -48,14 +51,23 @@ interface NotionBlockInPageDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insetBlocks(block: List<NotionBlockInPage>)
 
+    @Query("SELECT * FROM $BLOCK_TABLE_NAME WHERE id == :blockId")
+    suspend fun queryBlock(blockId: String): NotionBlockInPage?
+
     @Query("SELECT * FROM $BLOCK_TABLE_NAME WHERE pageId == :pageId")
     fun queryBlockWithPageId(pageId: String): Flow<List<NotionBlockInPage>>
 
     @Query("SELECT * FROM $BLOCK_TABLE_NAME WHERE pageId == :pageId ORDER BY editTimestamp DESC LIMIT :count OFFSET 0")
-    suspend fun queryLatestBlockWithPageIdByTime(pageId: String, count: Int): List<NotionBlockInPage>
+    suspend fun queryLatestBlockWithPageIdByTime(
+        pageId: String,
+        count: Int
+    ): List<NotionBlockInPage>
 
     @Query("DELETE FROM $BLOCK_TABLE_NAME WHERE pageId == :pageId")
     suspend fun deletePageAllBlock(pageId: String)
+
+    @Query("DELETE FROM $BLOCK_TABLE_NAME")
+    suspend fun nukeTable()
 }
 
 @TypeConverters(NotionPageRoomConverters::class)

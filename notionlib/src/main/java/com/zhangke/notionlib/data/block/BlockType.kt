@@ -15,4 +15,8 @@ object BlockType {
     const val CALLOUT = "callout"
 
     const val QUOTE = "quote"
+
+    const val BULLETED_LIST = "bulleted_list_item"
+
+    const val NUMBER_LIST = "numbered_list_item"
 }
