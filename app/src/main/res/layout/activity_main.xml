@@ -15,33 +15,18 @@
             android:layout_height="wrap_content"
             app:title="@string/app_name" />
 
-        <LinearLayout
+        <androidx.compose.ui.platform.ComposeView
             android:id="@+id/empty_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/add_icon"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:alpha="0.5"
-                app:srcCompat="@drawable/ic_baseline_add_24" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:text="@string/add_page_guid" />
-        </LinearLayout>
+            android:visibility="gone" />
 
         <LinearLayout
             android:id="@+id/content_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tab_layout"

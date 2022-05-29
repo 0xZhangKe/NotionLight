@@ -78,7 +78,9 @@ class AddPageViewModel : ViewModel() {
     private fun NotionPage.convertToPageConfig(): NotionPageConfig {
         return NotionPageConfig(
             id = id,
-            title = getTitle()
+            title = getTitle(),
+            url = url,
+            lastEditTime = System.currentTimeMillis()
         )
     }
 

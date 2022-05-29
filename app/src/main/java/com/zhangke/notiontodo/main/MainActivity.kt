@@ -5,22 +5,33 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.Toolbar
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import coil.compose.rememberAsyncImagePainter
 import coil.imageLoader
 import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.zhangke.architect.coil.CoilImageLoader
 import com.zhangke.architect.daynight.DayNightHelper
+import com.zhangke.architect.theme.AppMaterialTheme
+import com.zhangke.architect.theme.PrimaryText
 import com.zhangke.notiontodo.R
 import com.zhangke.notiontodo.addblock.AddBlockActivity
 import com.zhangke.notiontodo.config.NotionPageConfig
@@ -38,15 +49,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val toolbar = findViewById<Toolbar>(R.id.tool_bar)
-        val emptyContainer = findViewById<ViewGroup>(R.id.empty_container)
+        val composeContainer = findViewById<ComposeView>(R.id.empty_container)
         val contentContainer = findViewById<ViewGroup>(R.id.content_container)
         val viewPager = findViewById<ViewPager2>(R.id.view_pager)
         val tabLayout = findViewById<TabLayout>(R.id.tab_layout)
         val floating = findViewById<FloatingActionButton>(R.id.floating)
 
-        findViewById<View>(R.id.add_icon).setOnClickListener {
-            AddPageActivity.open(this)
-        }
         setSupportActionBar(toolbar)
         floating.setOnClickListener {
             val pageIndex = viewModel.pageConfigList.value?.getOrNull(viewPager.currentItem)?.id
@@ -58,11 +66,12 @@ class MainActivity : AppCompatActivity() {
             .observe(this) {
                 if (it.isNullOrEmpty()) {
                     contentContainer.visibility = View.GONE
-                    emptyContainer.visibility = View.VISIBLE
+                    composeContainer.visibility = View.VISIBLE
                     floating.visibility = View.GONE
+                    showEmptyContainer(composeContainer)
                 } else {
                     contentContainer.visibility = View.VISIBLE
-                    emptyContainer.visibility = View.GONE
+                    composeContainer.visibility = View.GONE
                     floating.visibility = View.VISIBLE
                     initTabUi(toolbar, tabLayout, viewPager, it)
                 }
@@ -136,6 +145,48 @@ class MainActivity : AppCompatActivity() {
 
         override fun createFragment(position: Int): Fragment {
             return PageFragment.create(pageList[position].id)
+        }
+    }
+
+    private fun showEmptyContainer(composeContainer: ComposeView) {
+
+        composeContainer.setContent {
+            AppMaterialTheme {
+                EmptyPage()
+            }
+        }
+    }
+
+    @Composable
+    fun EmptyPage() {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = 50.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.clickable {
+                    AddPageActivity.open(this@MainActivity)
+                }) {
+
+                Image(
+                    modifier = Modifier
+                        .size(80.dp, 80.dp),
+                    painter = rememberAsyncImagePainter(
+                        model = R.drawable.ic_paper,
+                        imageLoader = CoilImageLoader
+                    ),
+                    contentDescription = "Add new page"
+                )
+
+                PrimaryText(
+                    modifier = Modifier.padding(top = 10.dp),
+                    text = getString(R.string.add_page_guid)
+                )
+            }
         }
     }
 }

@@ -31,7 +31,12 @@
             android:name=".addblock.AddBlockActivity"
             android:exported="true"
             android:launchMode="singleTask"
-            android:theme="@style/Theme.NotionTodo.Transparent" />
+            android:theme="@style/Theme.NotionTodo.Transparent" >
+
+            <intent-filter>
+                <action android:name="com.zhangke.notion.ADD_BLOCK" />
+            </intent-filter>
+        </activity>
 
         <activity
             android:name=".setting.SettingActivity"
@@ -72,5 +77,4 @@
             </intent-filter>
         </activity>
     </application>
-
 </manifest>

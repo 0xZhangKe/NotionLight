@@ -12,9 +12,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.PowerSettingsNew
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.Help
+import androidx.compose.material.icons.rounded.Help
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -149,7 +149,7 @@ class SettingActivity : BaseActivity() {
                     modifier = Modifier.clickable {
                         PageManagerActivity.open(this@SettingActivity)
                     },
-                    icon = Icons.Filled.ArrowBack,
+                    icon = Icons.Filled.List,
                     title = getString(R.string.setting_page_manager),
                     subtitle = getString(R.string.setting_page_manager),
                 )
@@ -166,13 +166,13 @@ class SettingActivity : BaseActivity() {
                     val (iconId, titleId, subtitleId, dropDownMenu) = createRefs()
                     Icon(
                         modifier = Modifier
-                            .size(20.dp, 20.dp)
+                            .size(30.dp, 30.dp)
                             .constrainAs(iconId) {
                                 top.linkTo(titleId.top)
                                 bottom.linkTo(subtitleId.bottom)
                                 start.linkTo(parent.start)
                             },
-                        painter = rememberVectorPainter(image = Icons.Filled.ArrowBack),
+                        painter = painterResource(R.drawable.ic_night_mode),
                         contentDescription = "icon1"
                     )
 
@@ -224,7 +224,7 @@ class SettingActivity : BaseActivity() {
                     modifier = Modifier.clickable {
                         vm.openAppMarket(this@SettingActivity)
                     },
-                    icon = Icons.Filled.ArrowBack,
+                    iconResId = R.drawable.ic_ratting,
                     title = getString(R.string.setting_page_appraise),
                     subtitle = getString(R.string.setting_page_appraise_desc)
                 )
@@ -242,7 +242,7 @@ class SettingActivity : BaseActivity() {
                     modifier = Modifier.clickable {
                         HelpActivity.open(this@SettingActivity)
                     },
-                    icon = Icons.Filled.ArrowBack,
+                    iconResId = R.drawable.ic_help,
                     title = getString(R.string.setting_page_help),
                     subtitle = getString(R.string.setting_page_help_desc)
                 )
@@ -251,7 +251,7 @@ class SettingActivity : BaseActivity() {
                     modifier = Modifier.clickable {
                         OpenSourceActivity.open(this@SettingActivity)
                     },
-                    icon = Icons.Filled.ArrowBack,
+                    icon = Icons.Filled.Code,
                     title = getString(R.string.setting_page_open_source),
                     subtitle = getString(R.string.setting_page_open_source_desc)
                 )
@@ -323,7 +323,8 @@ class SettingActivity : BaseActivity() {
     @Composable
     fun CreateSettingLine(
         modifier: Modifier,
-        icon: ImageVector,
+        icon: ImageVector? = null,
+        iconResId: Int? = null,
         title: String,
         subtitle: String,
     ) {
@@ -335,14 +336,17 @@ class SettingActivity : BaseActivity() {
             val (iconId, titleId, subtitleId) = createRefs()
             Icon(
                 modifier = Modifier
-                    .size(20.dp, 20.dp)
+                    .size(30.dp, 30.dp)
                     .constrainAs(iconId) {
                         top.linkTo(titleId.top)
                         bottom.linkTo(subtitleId.bottom)
                         start.linkTo(parent.start)
                     },
-                painter = rememberVectorPainter(image = icon),
-                contentDescription = "icon1"
+                painter = if (icon != null)
+                    rememberVectorPainter(image = icon)
+                else
+                    painterResource(iconResId!!),
+                contentDescription = null
             )
 
             PrimaryText(

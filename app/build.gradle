@@ -102,5 +102,6 @@ dependencies {
     implementation thirdparty.swiperefresh
     implementation thirdparty.coil
     implementation thirdparty.'coil-compose'
+    implementation thirdparty.'coil-gif'
 
 }

@@ -3,11 +3,12 @@ package com.zhangke.notiontodo.main
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zhangke.framework.utils.DataWithLoading
-import com.zhangke.framework.utils.Optional
 import com.zhangke.framework.utils.appContext
 import com.zhangke.framework.utils.toast
 import com.zhangke.notionlib.NotionRepo
@@ -17,11 +18,9 @@ import com.zhangke.notionlib.ext.getLightText
 import com.zhangke.notiontodo.config.NotionPageConfig
 import com.zhangke.notiontodo.config.NotionPageConfigRepo
 import com.zhangke.notiontodo.support.supportedEditType
-import io.reactivex.rxjava3.core.Single
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -90,6 +89,16 @@ class MainViewModel : ViewModel() {
         val text = block.getLightText().orEmpty()
         val clip = ClipData.newPlainText(text, text)
         clipboard.setPrimaryClip(clip)
+    }
+
+    fun openInNotion(pageId: String) {
+        val pageConfig = pageConfigList.value?.find { it.id == pageId }
+        val url = pageConfig?.url ?: return
+        val uri = Uri.parse(url)
+        val intent = Intent(Intent.ACTION_VIEW, uri).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        appContext.startActivity(intent)
     }
 
     fun delete(block: NotionBlock, pageId: String) {

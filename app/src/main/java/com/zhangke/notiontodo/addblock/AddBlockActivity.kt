@@ -1,6 +1,6 @@
 package com.zhangke.notiontodo.addblock
 
-import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
@@ -35,12 +35,13 @@ class AddBlockActivity : BaseActivity() {
 
     companion object {
 
+        const val ACTION_ADD_BLOCK = "com.zhangke.notion.ADD_BLOCK"
         const val INTENT_ARG_PAGE = "arg_page"
 
-        fun open(activity: Activity, pageId: String? = null) {
-            Intent(activity, AddBlockActivity::class.java).let {
+        fun open(content: Context, pageId: String? = null) {
+            Intent(content, AddBlockActivity::class.java).let {
                 it.putExtra(INTENT_ARG_PAGE, pageId)
-                activity.startActivity(it)
+                content.startActivity(it)
             }
         }
     }

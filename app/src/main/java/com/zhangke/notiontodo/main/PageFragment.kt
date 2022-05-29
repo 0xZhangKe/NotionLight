@@ -151,6 +151,22 @@ class PageFragment : Fragment() {
                     .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(8.dp))
             ) {
+
+                Surface(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            viewModel.openInNotion(pageId)
+                            onDismissRequest()
+                        }
+                        .padding(25.dp, 10.dp, 25.dp, 10.dp)
+                ) {
+                    PrimaryText(
+                        modifier = Modifier.padding(13.dp, 13.dp, 13.dp, 13.dp),
+                        text = getString(R.string.block_dialog_open_in_notion)
+                    )
+                }
+
                 Surface(
                     modifier = Modifier
                         .fillMaxWidth()

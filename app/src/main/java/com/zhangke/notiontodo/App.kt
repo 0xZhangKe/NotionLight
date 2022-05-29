@@ -6,6 +6,7 @@ import com.zhangke.notionlib.NotionLibStartup
 import com.zhangke.architect.daynight.DayNightHelper
 import com.zhangke.notionlib.auth.NotionAuthorization
 import com.zhangke.notiontodo.auth.AuthorizationActivity
+import com.zhangke.notiontodo.shorcut.AppShortcutManager
 
 /**
  * Created by ZhangKe on 2022/3/13.
@@ -18,6 +19,7 @@ class App: MultiDexApplication() {
         DayNightHelper
         NotionLibStartup.onOpen()
         authStartup()
+        AppShortcutManager
     }
 }
 

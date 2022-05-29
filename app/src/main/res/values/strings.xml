@@ -19,6 +19,8 @@
 
     <string name="block_dialog_remove">删除</string>
 
+    <string name="block_dialog_open_in_notion">在 Notion 中打开</string>
+
     <string name="loading">加载中…</string>
 
     <string name="add_block_title">添加内容</string>
