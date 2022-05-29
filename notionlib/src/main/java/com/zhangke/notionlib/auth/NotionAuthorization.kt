@@ -31,6 +31,8 @@ object NotionAuthorization {
 
     val loginStateFlow = MutableSharedFlow<Boolean>()
 
+    var onNeedShowAuthPage: (() -> Unit)? = null
+
     private const val OAUTH_TOKEN_KEY = "oauth_token"
 
     fun start() {
@@ -63,10 +65,7 @@ object NotionAuthorization {
     }
 
     fun showAuthPage() {
-        val intent = Intent(appContext, AuthorizationActivity::class.java).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
-        appContext.startActivity(intent)
+        onNeedShowAuthPage?.invoke()
     }
 
     fun startAuth() {
@@ -103,8 +102,8 @@ object NotionAuthorization {
             }
 
             response.onError {
-                toast(it.message)
                 withContext(Dispatchers.Main) {
+                    toast(it.message)
                     oauthResult(it.message)
                 }
             }

@@ -23,8 +23,22 @@
 
     <string name="add_block_title">添加内容</string>
 
-    <string name="add_block_item_page_type">添加页面</string>
+    <string name="auth_page_title">请授权</string>
+    <string name="auth_hint">为了保证软件的正常运行，需要获取您的 Notion 账号访问权限</string>
+    <string name="auth_perform_button">点击授权</string>
 
+    <string name="auth_waiting_notion">请根据提示在授权页面进行授权…</string>
+    <string name="auth_waiting_notion_not_responding">无响应？</string>
+    <string name="auth_waiting_notion_not_click_here">点击这这里</string>
+    <string name="auth_waiting_api">已授权，获取授权信息…</string>
+    <string name="auth_success">授权完成</string>
+    <string name="auth_failed">授权失败：%s</string>
+    <string name="auth_manually_input_code">手动输入回调链接</string>
+    <string name="auth_manually_input_code_desc">在某些机型上可能授权完成后不会自动打开本App，因此可以在这里手动输入授权完成后的回调链接。</string>
+    <string name="auth_manually_input_hint">请输入完整的回调链接</string>
+    <string name="auth_manually_input_error">这个不对</string>
+
+    <string name="add_block_item_page_type">添加页面</string>
     <string name="add_block_item_block_type">内容类型</string>
 
     <string name="input_empty">请输入内容</string>
@@ -76,4 +90,6 @@
     <string name="edit_block_page_title">修改内容</string>
 
     <string name="edit_block_success">修改成功</string>
+
+    <string name="helper_page_title">帮助</string>
 </resources>

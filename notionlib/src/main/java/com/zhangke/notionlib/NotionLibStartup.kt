@@ -6,7 +6,7 @@ import com.zhangke.notionlib.auth.OauthInterceptor
 
 object NotionLibStartup {
 
-    fun start() {
+    fun onOpen() {
         GlobalOkHttpClient.addThirdPartInterceptor(OauthInterceptor())
         NotionAuthorization.start()
     }

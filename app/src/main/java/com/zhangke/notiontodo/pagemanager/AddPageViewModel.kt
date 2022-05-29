@@ -4,12 +4,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zhangke.notionlib.NotionRepo
+import com.zhangke.notionlib.auth.NotionAuthorization
 import com.zhangke.notionlib.data.NotionPage
 import com.zhangke.notionlib.ext.getSimpleText
 import com.zhangke.notiontodo.config.NotionPageConfig
 import com.zhangke.notiontodo.config.NotionPageConfigRepo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -19,7 +21,18 @@ class AddPageViewModel : ViewModel() {
     val notionPageList = MutableStateFlow<List<PageToAdded>?>(emptyList())
     val loading = MutableLiveData(true)
 
-    fun loadPage() {
+    init {
+        loadPage()
+        viewModelScope.launch {
+            NotionAuthorization.loginStateFlow.collect {
+                if (it) {
+                    loadPage()
+                }
+            }
+        }
+    }
+
+    private fun loadPage() {
         loading.value = true
         viewModelScope.launch(Dispatchers.IO) {
             val allPage = NotionRepo.queryAllPages()

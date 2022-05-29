@@ -149,7 +149,7 @@ class PageFragment : Fragment() {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.background, RoundedCornerShape(8.dp))
+                    .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(8.dp))
             ) {
                 Surface(
                     modifier = Modifier

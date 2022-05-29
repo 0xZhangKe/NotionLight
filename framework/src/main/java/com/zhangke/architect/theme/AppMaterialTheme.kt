@@ -60,7 +60,7 @@ private val lightColorTheme = lightColorScheme(
 
 private val nightColorTheme = darkColorScheme(
     primary = getColorFromRes(R.color.primary_night),
-//    primaryContainer = getColorFromRes(R.color.primary_variant_night),
+    primaryContainer = getColorFromRes(R.color.primary_night),
 //    secondaryContainer = getColorFromRes(R.color.primary_variant_night),
     background = Color.Transparent,
     surface = getColorFromRes(R.color.surface_night),
@@ -80,7 +80,7 @@ private val lightColors = lightColors(
 
 private val nightColors = darkColors(
     primary = getColorFromRes(R.color.primary_night),
-//    primaryVariant = getColorFromRes(R.color.primary_variant_night),
+    primaryVariant = getColorFromRes(R.color.primary_night),
 //    secondaryVariant = getColorFromRes(R.color.primary_variant_night),
     background = Color.Transparent,
     surface = getColorFromRes(R.color.surface_night),

@@ -29,6 +29,7 @@ import com.zhangke.architect.theme.PrimaryText
 import com.zhangke.framework.utils.StatusBarUtils
 import com.zhangke.framework.utils.toast
 import com.zhangke.notiontodo.R
+import com.zhangke.notiontodo.composable.AppColor
 
 class AddBlockActivity : BaseActivity() {
 
@@ -65,7 +66,7 @@ class AddBlockActivity : BaseActivity() {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xAA000000)),
+                .background(AppColor.translucentBackground),
         ) {
             Surface(
                 modifier = Modifier

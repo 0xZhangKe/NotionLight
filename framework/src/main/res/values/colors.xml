@@ -8,7 +8,7 @@
     <color name="text_color_secondary_day">#FF999999</color>
 
     <color name="text_color_primary_night">#FFF9F9F9</color>
-    <color name="text_color_secondary_night">#FF333333</color>
+    <color name="text_color_secondary_night">#AAF9F9F9</color>
 
     <color name="primary_day">#009688</color>
     <color name="primary_variant_day">#FFFBFE</color>

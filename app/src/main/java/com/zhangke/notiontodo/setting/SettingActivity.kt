@@ -240,7 +240,7 @@ class SettingActivity : BaseActivity() {
 
                 CreateSettingLine(
                     modifier = Modifier.clickable {
-
+                        HelpActivity.open(this@SettingActivity)
                     },
                     icon = Icons.Filled.ArrowBack,
                     title = getString(R.string.setting_page_help),
@@ -290,6 +290,7 @@ class SettingActivity : BaseActivity() {
                             }) {
                                 PrimaryText(
                                     text = getString(R.string.cancel),
+                                    color = Color.White
                                 )
                             }
                         },
@@ -300,6 +301,7 @@ class SettingActivity : BaseActivity() {
                             }) {
                                 PrimaryText(
                                     text = getString(R.string.ok),
+                                    color = Color.White
                                 )
                             }
                         }

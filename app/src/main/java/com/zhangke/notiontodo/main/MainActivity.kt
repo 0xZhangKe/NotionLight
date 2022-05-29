@@ -5,6 +5,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
@@ -63,7 +64,7 @@ class MainActivity : AppCompatActivity() {
                     contentContainer.visibility = View.VISIBLE
                     emptyContainer.visibility = View.GONE
                     floating.visibility = View.VISIBLE
-                    initTabUi(tabLayout, viewPager, it)
+                    initTabUi(toolbar, tabLayout, viewPager, it)
                 }
             }
     }
@@ -106,18 +107,26 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initTabUi(
+        toolbar: Toolbar,
         tabLayout: TabLayout,
         viewPager: ViewPager2,
         pageList: List<NotionPageConfig>
     ) {
         val adapter = PageAdapter(this, pageList)
         viewPager.adapter = adapter
-        val mediator = TabLayoutMediator(
-            tabLayout, viewPager
-        ) { tab, position ->
-            tab.text = pageList[position].title
+        if (pageList.size > 1) {
+            tabLayout.visibility = View.VISIBLE
+            val mediator = TabLayoutMediator(
+                tabLayout, viewPager
+            ) { tab, position ->
+                tab.text = pageList[position].title
+            }
+            mediator.attach()
+            toolbar.title = getString(R.string.app_name)
+        } else {
+            tabLayout.visibility = View.GONE
+            toolbar.title = pageList.firstOrNull()?.title ?: getString(R.string.app_name)
         }
-        mediator.attach()
     }
 
     class PageAdapter(activity: FragmentActivity, private val pageList: List<NotionPageConfig>) :

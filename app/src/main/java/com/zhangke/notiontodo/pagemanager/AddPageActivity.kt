@@ -46,11 +46,6 @@ class AddPageActivity : BaseActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        vm.loadPage()
-    }
-
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun PageScreen(vm: AddPageViewModel) {
@@ -106,6 +101,7 @@ class AddPageActivity : BaseActivity() {
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 Checkbox(
+                                    colors = CheckboxDefaults.colors(checkmarkColor = Color.White),
                                     checked = checked,
                                     onCheckedChange = {
                                         checked = it

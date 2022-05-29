@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.zhangke.architect.activity.BaseActivity
 import com.zhangke.architect.theme.AppMaterialTheme
 import com.zhangke.architect.theme.PrimaryText
 import com.zhangke.framework.utils.StatusBarUtils
@@ -26,8 +27,9 @@ import com.zhangke.framework.utils.toast
 import com.zhangke.notionlib.data.NotionBlock
 import com.zhangke.notionlib.ext.getLightText
 import com.zhangke.notiontodo.R
+import com.zhangke.notiontodo.composable.AppColor
 
-class EditBlockActivity : AppCompatActivity() {
+class EditBlockActivity : BaseActivity() {
 
     companion object {
 
@@ -67,7 +69,7 @@ class EditBlockActivity : AppCompatActivity() {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xAA000000)),
+                .background(AppColor.translucentBackground),
         ) {
             Surface(
                 modifier = Modifier
@@ -98,8 +100,7 @@ class EditBlockActivity : AppCompatActivity() {
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(20.dp, 20.dp, 20.dp, 20.dp)
-                            .defaultMinSize(minHeight = 80.dp),
+                            .padding(20.dp, 20.dp, 20.dp, 20.dp),
                     )
                 }
             }
