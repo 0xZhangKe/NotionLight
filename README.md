@@ -1,2 +1,2 @@
 # NotionTodo
-A quick and lightweight Notion TODO app
+A quick and lightweight Notion app

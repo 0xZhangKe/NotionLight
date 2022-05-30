@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.zhangke.notiontodo">
+    package="com.zhangke.notionlight">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
-        android:name=".App"
+        android:name="com.zhangke.notionlight.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NotionTodo">
         <activity
-            android:name=".main.MainActivity"
+            android:name="com.zhangke.notionlight.main.MainActivity"
             android:exported="true">
 
             <intent-filter>
@@ -24,11 +24,11 @@
         </activity>
 
         <activity
-            android:name=".pagemanager.AddPageActivity"
+            android:name="com.zhangke.notionlight.pagemanager.AddPageActivity"
             android:exported="true" />
 
         <activity
-            android:name=".addblock.AddBlockActivity"
+            android:name="com.zhangke.notionlight.addblock.AddBlockActivity"
             android:exported="true"
             android:launchMode="singleTask"
             android:theme="@style/Theme.NotionTodo.Transparent" >
@@ -39,28 +39,28 @@
         </activity>
 
         <activity
-            android:name=".setting.SettingActivity"
+            android:name="com.zhangke.notionlight.setting.SettingActivity"
             android:exported="true" />
 
         <activity
-            android:name=".pagemanager.PageManagerActivity"
+            android:name="com.zhangke.notionlight.pagemanager.PageManagerActivity"
             android:exported="true" />
 
         <activity
-            android:name=".code.OpenSourceActivity"
+            android:name="com.zhangke.notionlight.code.OpenSourceActivity"
             android:exported="true" />
 
         <activity
-            android:name=".editblock.EditBlockActivity"
+            android:name="com.zhangke.notionlight.editblock.EditBlockActivity"
             android:exported="true"
             android:theme="@style/Theme.NotionTodo.Transparent" />
 
         <activity
-            android:name=".setting.HelpActivity"
+            android:name="com.zhangke.notionlight.setting.HelpActivity"
             android:exported="true" />
 
         <activity
-            android:name=".auth.AuthorizationActivity"
+            android:name="com.zhangke.notionlight.auth.AuthorizationActivity"
             android:exported="true"
             android:launchMode="singleTask"
             android:theme="@style/Theme.NotionTodo.Transparent">
