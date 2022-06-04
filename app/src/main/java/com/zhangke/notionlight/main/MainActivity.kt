@@ -32,12 +32,11 @@ import com.zhangke.architect.coil.CoilImageLoader
 import com.zhangke.architect.daynight.DayNightHelper
 import com.zhangke.architect.theme.AppMaterialTheme
 import com.zhangke.architect.theme.PrimaryText
+import com.zhangke.notionlight.R
 import com.zhangke.notionlight.addblock.AddBlockActivity
 import com.zhangke.notionlight.config.NotionPageConfig
 import com.zhangke.notionlight.pagemanager.AddPageActivity
 import com.zhangke.notionlight.setting.SettingActivity
-import com.zhangke.notionlight.R
-import java.lang.RuntimeException
 
 class MainActivity : AppCompatActivity() {
 
@@ -61,7 +60,6 @@ class MainActivity : AppCompatActivity() {
             val pageIndex = viewModel.pageConfigList.value?.getOrNull(viewPager.currentItem)?.id
                 ?: return@setOnClickListener
             AddBlockActivity.open(this, pageIndex)
-            throw RuntimeException("Test crash")
         }
 
         viewModel.pageConfigList
