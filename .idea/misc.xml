@@ -10,15 +10,25 @@
         <entry key="../../../../../layout/compose-model-1649578383195.xml" value="0.31672297297297297" />
         <entry key="../../../../../layout/compose-model-1651650846098.xml" value="0.1" />
         <entry key="..\:/Users/zk721/Desktop/code/NotionTodo/app/src/main/res/layout/activity_main.xml" value="0.33958333333333335" />
+        <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2415" />
+        <entry key="app/src/main/res/drawable-v24/s.xml" value="0.2415" />
+        <entry key="app/src/main/res/drawable/bbb.xml" value="0.2415" />
         <entry key="app/src/main/res/drawable/ic_baseline_account_circle_24.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_baseline_add_24.xml" value="0.36614583333333334" />
+        <entry key="app/src/main/res/drawable/ic_baseline_edit_24.xml" value="0.2415" />
         <entry key="app/src/main/res/drawable/ic_help.xml" value="0.2415" />
-        <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.36614583333333334" />
+        <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_launcher_background_round.xml" value="0.2415" />
+        <entry key="app/src/main/res/drawable/ic_launcher_foreground.xml" value="0.2415" />
         <entry key="app/src/main/res/drawable/ic_night_mode.xml" value="0.2415" />
+        <entry key="app/src/main/res/drawable/ic_notion_icon.xml" value="0.2415" />
+        <entry key="app/src/main/res/drawable/ic_notion_icon2.xml" value="0.2415" />
         <entry key="app/src/main/res/drawable/ic_ratting.xml" value="0.2415" />
         <entry key="app/src/main/res/layout/activity_help.xml" value="0.3489583333333333" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="app/src/main/res/menu/main_menu.xml" value="0.35" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.2415" />
         <entry key="notionlib/src/main/res/drawable/notion_lib_error.xml" value="0.3802083333333333" />
       </map>
     </option>

@@ -1,7 +1,7 @@
 package com.zhangke.notionlib
 
 import com.google.gson.JsonObject
-import com.zhangke.notionlib.auth.NotionTodoIntegrationConfig
+import com.zhangke.notionlib.auth.NotionIntegrationConfig
 import com.zhangke.notionlib.data.NotionBlock
 import com.zhangke.notionlib.data.NotionListEntry
 import com.zhangke.notionlib.data.NotionPage
@@ -20,7 +20,7 @@ interface NotionApi {
     }
 
     @Headers(
-        "Authorization: ${NotionTodoIntegrationConfig.AUTHORIZATION}",
+        "Authorization: ${NotionIntegrationConfig.AUTHORIZATION}",
         "$OAUTH_HEADER_TAG: true"
     )
     @POST("/v1/oauth/token")

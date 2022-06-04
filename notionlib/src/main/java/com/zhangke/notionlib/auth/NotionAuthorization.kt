@@ -85,7 +85,7 @@ object NotionAuthorization {
         val authUrlBuilder = StringBuilder()
         authUrlBuilder.append("https://api.notion.com/v1/oauth/authorize")
         authUrlBuilder.append("?owner=user")
-        authUrlBuilder.append("&client_id=200bca3a-ff25-437e-82dc-2dfd7fc1f1f3")
+        authUrlBuilder.append("&client_id=${NotionIntegrationConfig.CLIENT_ID}")
         authUrlBuilder.append("&response_type=code")
         authUrlBuilder.append("&redirect_uri=$REDIRECT_URL")
         return authUrlBuilder.toString()

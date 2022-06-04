@@ -44,7 +44,7 @@ class OauthInterceptor : Interceptor {
         val token = NotionAuthorization.readTokenSubject
             .map { Optional.of(NotionAuthorization.getOauthToken()) }
             .blockingGet()
-            ?.getOrNull()
+            .getOrNull()
             ?.accessToken
         if (token.isNullOrEmpty()) {
             NotionAuthorization.showAuthPage()

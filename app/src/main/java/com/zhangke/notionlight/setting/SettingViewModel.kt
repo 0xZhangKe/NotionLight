@@ -14,6 +14,7 @@ import com.zhangke.framework.utils.appContext
 import com.zhangke.framework.utils.toast
 import com.zhangke.notionlib.auth.NotionAuthorization
 import com.zhangke.notionlib.data.OauthToken
+import com.zhangke.notionlight.NotionLightConfig
 import com.zhangke.notionlight.R
 import com.zhangke.notionlight.config.NotionPageConfigRepo
 import kotlinx.coroutines.Dispatchers
@@ -73,10 +74,28 @@ class SettingViewModel : ViewModel() {
         }
     }
 
-    fun logout(){
+    fun logout() {
         NotionAuthorization.logout()
         viewModelScope.launch {
             NotionPageConfigRepo.nuke()
         }
+    }
+
+    fun feedbackByAppStore(activity: Activity) {
+        openAppMarket(activity)
+    }
+
+    fun feedbackByEmail(activity: Activity) {
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "plain/text"
+            putExtra(Intent.EXTRA_EMAIL, arrayOf(NotionLightConfig.FEEDBACK_EMAIL))
+            putExtra(Intent.EXTRA_SUBJECT, "NotionLight feedback")
+        }
+        activity.startActivity(intent)
+    }
+
+    fun feedbackByGithub(activity: Activity) {
+        val uri = Uri.parse(NotionLightConfig.FEEDBACK_GITHUB)
+        activity.startActivity(Intent(Intent.ACTION_VIEW, uri))
     }
 }
