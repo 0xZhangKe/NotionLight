@@ -10,6 +10,7 @@ import com.zhangke.architect.datastore.removeString
 import com.zhangke.framework.utils.appContext
 import com.zhangke.framework.utils.sharedGson
 import com.zhangke.framework.utils.toast
+import com.zhangke.notionlib.BuildConfig
 import com.zhangke.notionlib.NotionRepo
 import com.zhangke.notionlib.data.OauthToken
 import io.reactivex.rxjava3.subjects.SingleSubject
@@ -85,7 +86,7 @@ object NotionAuthorization {
         val authUrlBuilder = StringBuilder()
         authUrlBuilder.append("https://api.notion.com/v1/oauth/authorize")
         authUrlBuilder.append("?owner=user")
-        authUrlBuilder.append("&client_id=${NotionIntegrationConfig.CLIENT_ID}")
+        authUrlBuilder.append("&client_id=${BuildConfig.CLIENT_ID}")
         authUrlBuilder.append("&response_type=code")
         authUrlBuilder.append("&redirect_uri=$REDIRECT_URL")
         return authUrlBuilder.toString()

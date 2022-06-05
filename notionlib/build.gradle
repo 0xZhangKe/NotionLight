@@ -15,6 +15,11 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
+
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file('local.properties').newDataInputStream())
+        buildConfigField "String", "CLIENT_ID", "\"${properties.getProperty('notion_client_id')}\""
+        buildConfigField "String", "AUTHORIZATION", "\"${properties.getProperty('notion_authorization')}\""
     }
 
     buildTypes {
