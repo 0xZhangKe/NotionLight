@@ -30,8 +30,6 @@
     <string name="auth_perform_button">点击授权</string>
 
     <string name="auth_waiting_notion">请根据提示在授权页面进行授权…</string>
-    <string name="auth_waiting_notion_not_responding">无响应？</string>
-    <string name="auth_waiting_notion_not_click_here">点击这这里</string>
     <string name="auth_waiting_api">已授权，获取授权信息…</string>
     <string name="auth_success">授权完成</string>
     <string name="auth_failed">授权失败：%s</string>

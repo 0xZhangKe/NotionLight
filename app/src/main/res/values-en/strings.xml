@@ -1,3 +1,107 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">NotionLight</string>
+
+    <string name="cancel">Cancel</string>
+
+    <string name="ok">OK</string>
+
+    <string name="copy">Copy</string>
+
+    <string name="error_app_market_not_found">Application market not found</string>
+
+    <string name="add_page_guid">No content available, please add.</string>
+
+    <string name="add_page_title">Add page</string>
+
+    <string name="page_add_success">Added successfully</string>
+
+    <string name="block_dialog_edit">Edit</string>
+
+    <string name="block_dialog_remove">Delete</string>
+
+    <string name="block_dialog_open_in_notion">Open in Notion</string>
+
+    <string name="loading">loading…</string>
+
+    <string name="add_block_title">Add content</string>
+
+    <string name="auth_page_title">Please authorise</string>
+    <string name="auth_hint">In order for the software to work properly, it is necessary to obtain access to your Notion account</string>
+    <string name="auth_perform_button">Start of authorisation</string>
+
+    <string name="auth_waiting_notion">Please follow the prompts to authorise on the authorisation page.</string>
+    <string name="auth_waiting_api">Authorised, waiting for information request…</string>
+    <string name="auth_success">Authorisation complete</string>
+    <string name="auth_failed">Authorisation failure: %s</string>
+    <string name="auth_manually_input_code">Manually enter the callback link</string>
+    <string name="auth_manually_input_code_desc">On some models the app may not open automatically after authorisation, so you can manually enter the callback link here after authorisation has been completed.</string>
+    <string name="auth_manually_input_hint">Please enter the full callback link</string>
+    <string name="auth_manually_input_error">This is not correct</string>
+
+    <string name="add_block_item_page_type">Add page</string>
+    <string name="add_block_item_block_type">Content Type</string>
+
+    <string name="input_empty">Please enter content</string>
+
+    <string name="unsupported_append_block_type">Unsupported types</string>
+
+    <string name="add_block_success">Added successfully</string>
+
+    <string name="account_icon">Personal</string>
+
+    <string name="main_floating_desc">Add entry</string>
+
+    <string name="edit_page">Edit page</string>
+
+    <string name="setting_page_title">Setting</string>
+
+    <string name="setting_not_login">Not currently logged in</string>
+
+    <string name="setting_logout_dialog_title">Confirm logout?</string>
+
+    <string name="setting_page_manager">Page management</string>
+
+    <string name="setting_page_manager_subtitle">Add or remove pages</string>
+
+    <string name="setting_page_day_night">Dark Mode</string>
+
+    <string name="setting_page_day_night_day">Light mode</string>
+
+    <string name="setting_page_day_night_night">Dark Mode</string>
+
+    <string name="setting_page_day_night_system">Follow System</string>
+
+    <string name="setting_page_appraise">Rating us</string>
+
+    <string name="setting_page_appraise_desc">This will let us know how we can improve</string>
+
+    <string name="setting_page_about_title">About</string>
+
+    <string name="setting_page_help">Help documentation</string>
+
+    <string name="setting_page_help_desc">Questions about in-use</string>
+
+    <string name="setting_page_open_source">Open source</string>
+
+    <string name="setting_feedback">Feedback and suggestions</string>
+
+    <string name="setting_feedback_desc">Make a suggestion or give feedback on a problem</string>
+
+    <string name="setting_feedback_dialog_app_store">Go to the App Market to give feedback</string>
+
+    <string name="setting_feedback_dialog_email">Send us an email</string>
+
+    <string name="setting_feedback_dialog_github">GitHub issue</string>
+
+    <string name="setting_page_open_source_desc">Open source statement for this project and dependent libraries</string>
+
+    <string name="page_manager_title">Page management</string>
+
+    <string name="open_source_page_title">Open source</string>
+
+    <string name="edit_block_page_title">Modifications</string>
+
+    <string name="edit_block_success">Modified successfully</string>
+
+    <string name="helper_page_title">Help</string>
 </resources>
