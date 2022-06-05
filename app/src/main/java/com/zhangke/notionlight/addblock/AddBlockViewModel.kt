@@ -59,6 +59,10 @@ class AddBlockViewModel : ViewModel() {
             toast(R.string.input_empty)
             return
         }
+        if (!supportedEditType.contains(blockType)) {
+            toast(R.string.unsupported_append_block_type)
+            return
+        }
         viewModelScope.launch {
             val response = NotionRepo.appendBlock(inputtedText, pageId, blockType)
             response.onSuccess {

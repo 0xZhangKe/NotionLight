@@ -61,11 +61,8 @@ private val lightColorTheme = lightColorScheme(
 private val nightColorTheme = darkColorScheme(
     primary = getColorFromRes(R.color.primary_night),
     primaryContainer = getColorFromRes(R.color.primary_night),
-//    secondaryContainer = getColorFromRes(R.color.primary_variant_night),
     background = Color.Transparent,
     surface = getColorFromRes(R.color.surface_night),
-//    onPrimary = getColorFromRes(R.color.on_primary_night),
-//    onSecondary = getColorFromRes(R.color.on_primary_secondary_night),
 )
 
 private val lightColors = lightColors(
@@ -81,11 +78,8 @@ private val lightColors = lightColors(
 private val nightColors = darkColors(
     primary = getColorFromRes(R.color.primary_night),
     primaryVariant = getColorFromRes(R.color.primary_night),
-//    secondaryVariant = getColorFromRes(R.color.primary_variant_night),
     background = Color.Transparent,
     surface = getColorFromRes(R.color.surface_night),
-//    onPrimary = getColorFromRes(R.color.on_primary_night),
-//    onSecondary = getColorFromRes(R.color.on_primary_secondary_night),
 )
 
 private fun getColorFromRes(resId: Int): Color {
@@ -94,7 +88,6 @@ private fun getColorFromRes(resId: Int): Color {
 
 @Composable
 fun AppMaterialTheme(content: @Composable () -> Unit) {
-//    val isNight = DayNightHelper.isNight().collectAsState(initial = false).value
     val isNight = DayNightHelper.isNight()
     MaterialTheme(
         colorScheme = if (isNight) nightColorTheme else lightColorTheme

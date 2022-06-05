@@ -32,7 +32,7 @@ class OpenSourceViewModel : ViewModel() {
             name = appContext.getString(R.string.app_name),
             author = "ZhangKe",
             license = "The Apache Software License, Version 2.0",
-            url = "https://github.com/0xZhangKe/NotionTodo",
+            url = "https://github.com/0xZhangKe/NotionLight",
         )
     }
 

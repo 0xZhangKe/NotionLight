@@ -28,15 +28,25 @@
             android:orientation="vertical"
             android:visibility="gone">
 
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/tab_layout"
+            <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:tabBackground="?android:attr/colorBackground"
-                app:tabIndicatorColor="?attr/colorOnPrimary"
-                app:tabRippleColor="?attr/colorOnSecondary"
-                app:tabSelectedTextColor="?android:attr/textColorPrimary"
-                app:tabTextColor="?android:attr/textColorSecondary" />
+                android:fillViewport="true"
+                android:scrollbars="none">
+
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tab_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    app:tabBackground="?android:attr/colorBackground"
+                    app:tabIndicatorColor="?attr/colorOnPrimary"
+                    app:tabMode="scrollable"
+                    app:tabRippleColor="?attr/colorOnSecondary"
+                    app:tabSelectedTextColor="?android:attr/textColorPrimary"
+                    app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget"
+                    app:tabTextColor="?android:attr/textColorSecondary" />
+            </HorizontalScrollView>
 
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/view_pager"

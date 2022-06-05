@@ -149,7 +149,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showEmptyContainer(composeContainer: ComposeView) {
-
         composeContainer.setContent {
             AppMaterialTheme {
                 EmptyPage()
@@ -168,9 +167,12 @@ class MainActivity : AppCompatActivity() {
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.clickable {
-                    AddPageActivity.open(this@MainActivity)
-                }) {
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clickable {
+                        AddPageActivity.open(this@MainActivity)
+                    }) {
 
                 Image(
                     modifier = Modifier

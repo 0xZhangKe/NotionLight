@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">NotionTodo</string>
+    <string name="app_name">NotionLight</string>
 
     <string name="cancel">取消</string>
 
@@ -44,6 +44,8 @@
     <string name="add_block_item_block_type">内容类型</string>
 
     <string name="input_empty">请输入内容</string>
+
+    <string name="unsupported_append_block_type">不支持的类型</string>
 
     <string name="add_block_success">添加成功</string>
 
