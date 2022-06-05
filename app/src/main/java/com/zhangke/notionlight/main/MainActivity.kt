@@ -1,10 +1,12 @@
 package com.zhangke.notionlight.main
 
+import android.graphics.Typeface
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.Toolbar
@@ -121,6 +123,22 @@ class MainActivity : BaseActivity() {
     ) {
         val adapter = PageAdapter(this, pageList)
         viewPager.adapter = adapter
+        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                val tabTextView = fetchTextView(tabLayout, tab.position) ?: return
+                tabTextView.setTypeface(tabTextView.typeface, Typeface.BOLD)
+
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab) {
+                val tabTextView = fetchTextView(tabLayout, tab.position) ?: return
+                tabTextView.setTypeface(null, Typeface.NORMAL)
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+            }
+        })
         if (pageList.size > 1) {
             tabLayout.visibility = View.VISIBLE
             val mediator = TabLayoutMediator(
@@ -134,6 +152,13 @@ class MainActivity : BaseActivity() {
             tabLayout.visibility = View.GONE
             toolbar.title = pageList.firstOrNull()?.title ?: getString(R.string.app_name)
         }
+    }
+
+    private fun fetchTextView(tabLayout: TabLayout, position: Int): TextView? {
+        val tabContainer =
+            ((tabLayout.getChildAt(0) as? ViewGroup)?.getChildAt(position) as? ViewGroup)
+                ?: return null
+        return (tabContainer.getChildAt(1) as? TextView) ?: return null
     }
 
     class PageAdapter(activity: FragmentActivity, private val pageList: List<NotionPageConfig>) :

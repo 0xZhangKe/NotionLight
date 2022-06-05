@@ -288,7 +288,8 @@ class AuthorizationActivity : BaseActivity() {
             if (!hint.value.isNullOrEmpty()) {
                 AnimatedContent(targetState = hint.value.orEmpty()) { targetHint ->
                     PrimaryText(
-                        modifier = Modifier.offset(y = 10.dp),
+                        modifier = Modifier.offset(y = 10.dp)
+                            .padding(horizontal = 30.dp),
                         text = targetHint
                     )
                 }
