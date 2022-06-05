@@ -17,6 +17,8 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.text.HtmlCompat
 import com.zhangke.architect.activity.BaseActivity
 import com.zhangke.architect.daynight.DayNightHelper
+import com.zhangke.architect.language.LanguageHelper
+import com.zhangke.architect.language.LanguageSettingType
 import com.zhangke.architect.theme.AppMaterialTheme
 import com.zhangke.notionlight.R
 import com.zhangke.notionlight.composable.Toolbar
@@ -32,16 +34,23 @@ class HelpActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val html = try {
-            String(assets.open("help.html").readBytes())
+        setContent {
+            AppMaterialTheme {
+                HelpPage(readHtmlFromAssets())
+            }
+        }
+    }
+
+    private fun readHtmlFromAssets(): String {
+        val assetsName = when (LanguageHelper.currentType) {
+            LanguageSettingType.CN -> "help.html"
+            else -> "help-en.html"
+        }
+        return try {
+            String(assets.open(assetsName).readBytes())
         } catch (e: Exception) {
             Log.e("HelpActivity", "load help.html error.", e)
             ""
-        }
-        setContent {
-            AppMaterialTheme {
-                HelpPage(html)
-            }
         }
     }
 

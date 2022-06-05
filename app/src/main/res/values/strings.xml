@@ -95,6 +95,14 @@
 
     <string name="setting_page_open_source_desc">本项目以及依赖库的开源声明</string>
 
+    <string name="setting_language">语言</string>
+
+    <string name="setting_language_zh">简体中文</string>
+
+    <string name="setting_language_en">English</string>
+
+    <string name="setting_language_system">跟随系统</string>
+
     <string name="page_manager_title">页面管理</string>
 
     <string name="open_source_page_title">开源声明</string>

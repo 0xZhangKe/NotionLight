@@ -1,6 +1,5 @@
 package com.zhangke.architect.daynight
 
-import android.app.Activity
 import android.content.res.Configuration
 import android.os.SystemClock
 import android.util.Log
@@ -9,11 +8,9 @@ import com.zhangke.architect.coroutines.ApplicationScope
 import com.zhangke.architect.datastore.dataStore
 import com.zhangke.architect.datastore.getInt
 import com.zhangke.architect.datastore.putInt
-import com.zhangke.architect.daynight.DayNightHelper.isNight
 import com.zhangke.framework.R
 import com.zhangke.framework.utils.appContext
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
@@ -26,9 +23,7 @@ object DayNightHelper {
     private var dayNightMode: DayNightMode
 
     init {
-        val start = SystemClock.elapsedRealtime()
         val modeValue = getDayNightModeFromLocal()
-        Log.d("Z_TEST", "Read DayNight from local cost:${SystemClock.elapsedRealtime() - start}")
         AppCompatDelegate.setDefaultNightMode(modeValue)
         dayNightMode = modeValue.toDayNightMode()
         ApplicationScope.launch {
@@ -36,12 +31,11 @@ object DayNightHelper {
         }
     }
 
-    fun setActivityDayNightMode(activity: Activity) {
+    fun setActivityDayNightMode() {
         AppCompatDelegate.setDefaultNightMode(dayNightMode.modeValue)
     }
 
     fun isNight(): Boolean {
-//        return dayNightModeFlow.map { it.isNight() }
         return dayNightMode.isNight()
     }
 
@@ -85,17 +79,11 @@ object DayNightHelper {
     }
 }
 
-enum class DayNightMode(val modeValue: Int, val modeName: String) {
+enum class DayNightMode(val modeValue: Int) {
 
-    DAY(AppCompatDelegate.MODE_NIGHT_NO, appContext.getString(R.string.setting_page_day_night_day)),
+    DAY(AppCompatDelegate.MODE_NIGHT_NO),
 
-    NIGHT(
-        AppCompatDelegate.MODE_NIGHT_YES,
-        appContext.getString(R.string.setting_page_day_night_night)
-    ),
+    NIGHT(AppCompatDelegate.MODE_NIGHT_YES),
 
-    FOLLOW_SYSTEM(
-        AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM,
-        appContext.getString(R.string.setting_page_day_night_system)
-    )
+    FOLLOW_SYSTEM(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
 }

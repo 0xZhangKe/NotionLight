@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Code
+import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.material.icons.outlined.Feedback
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -18,6 +20,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
@@ -27,16 +30,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.core.content.ContextCompat
 import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
 import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
 import com.zhangke.architect.activity.BaseActivity
-import com.zhangke.architect.theme.AppMaterialTheme
-import com.zhangke.architect.theme.PrimaryText
-import com.zhangke.architect.theme.SecondaryText
+import com.zhangke.architect.theme.*
 import com.zhangke.notionlight.R
 import com.zhangke.notionlight.code.OpenSourceActivity
 import com.zhangke.notionlight.pagemanager.PageManagerActivity
@@ -159,69 +157,62 @@ class SettingActivity : BaseActivity() {
                     subtitle = getString(R.string.setting_page_manager),
                 )
 
-                var dayNightModeExpanded by remember { mutableStateOf(false) }
-                ConstraintLayout(
-                    modifier = Modifier
-                        .clickable {
-                            dayNightModeExpanded = true
-                        }
-                        .fillMaxWidth()
-                        .padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 20.dp)
+                var dayNightModeMenuExpanded by remember { mutableStateOf(false) }
+                val currentDayNightMode = vm.currentDayNightMode.observeAsState().value
+                val currentDayNightModeName = if (currentDayNightMode != null) {
+                    vm.getDayNightVm(currentDayNightMode).name
+                } else {
+                    ""
+                }
+                CreateSettingLine(
+                    modifier = Modifier.clickable {
+                        dayNightModeMenuExpanded = true
+                    },
+                    iconResId = R.drawable.ic_night_mode,
+                    title = getString(R.string.setting_page_day_night),
+                    subtitle = currentDayNightModeName,
+                    onDismissRequest = { dayNightModeMenuExpanded = false },
+                    menuExpanded = dayNightModeMenuExpanded
                 ) {
-                    val (iconId, titleId, subtitleId, dropDownMenu) = createRefs()
-                    Icon(
-                        modifier = Modifier
-                            .size(30.dp, 30.dp)
-                            .constrainAs(iconId) {
-                                top.linkTo(titleId.top)
-                                bottom.linkTo(subtitleId.bottom)
-                                start.linkTo(parent.start)
+                    vm.getDayNightModeList().forEach {
+                        DropdownMenuItem(
+                            text = {
+                                Text(text = it.name)
                             },
-                        painter = painterResource(R.drawable.ic_night_mode),
-                        contentDescription = "icon1"
-                    )
-
-                    PrimaryText(
-                        modifier = Modifier.constrainAs(titleId) {
-                            top.linkTo(parent.top)
-                            start.linkTo(iconId.end, margin = 20.dp)
-                        },
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium,
-                        text = getString(R.string.setting_page_day_night),
-                    )
-
-                    val currentDayNightMode = vm.currentDayNightMode.observeAsState().value
-                    SecondaryText(
-                        modifier = Modifier.constrainAs(subtitleId) {
-                            top.linkTo(titleId.bottom, margin = 3.dp)
-                            start.linkTo(titleId.start)
-                        },
-                        fontSize = 14.sp,
-                        text = currentDayNightMode?.modeName.orEmpty(),
-                        color = Color.Gray,
-                    )
-                    DropdownMenu(
-                        modifier = Modifier.constrainAs(dropDownMenu) {
-                            top.linkTo(subtitleId.bottom)
-                            start.linkTo(subtitleId.start)
-                        },
-                        expanded = dayNightModeExpanded,
-                        onDismissRequest = { dayNightModeExpanded = false }) {
-                        vm.dayNightModeList.forEach {
-                            DropdownMenuItem(
-                                text = {
-                                    Text(text = it.modeName)
-                                },
-                                onClick = {
-                                    dayNightModeExpanded = false
-                                    coroutineScope.launch {
-                                        delay(200)
-                                        vm.updateDayNight(it)
-                                    }
+                            onClick = {
+                                dayNightModeMenuExpanded = false
+                                coroutineScope.launch {
+                                    delay(200)
+                                    vm.updateDayNight(it)
                                 }
-                            )
-                        }
+                            }
+                        )
+                    }
+                }
+
+                var languageMenuExpanded by remember { mutableStateOf(false) }
+                val currentLanguage = vm.getCurrentLanguage()
+                CreateSettingLine(
+                    modifier = Modifier.clickable {
+                        languageMenuExpanded = true
+                    },
+                    iconResId = R.drawable.ic_language,
+                    iconPadding = 4.dp,
+                    title = getString(R.string.setting_language),
+                    subtitle = currentLanguage.name,
+                    onDismissRequest = { languageMenuExpanded = false },
+                    menuExpanded = languageMenuExpanded
+                ) {
+                    vm.getSupportedLanguage().forEach {
+                        DropdownMenuItem(
+                            text = {
+                                Text(text = it.name)
+                            },
+                            onClick = {
+                                languageMenuExpanded = false
+                                vm.setLanguage(this@SettingActivity, it)
+                            }
+                        )
                     }
                 }
 
@@ -276,6 +267,7 @@ class SettingActivity : BaseActivity() {
                     },
                     iconResId = R.mipmap.logo,
                     title = getString(R.string.setting_page_about_title),
+                    tintColor = null,
                     subtitle = vm.getAppVersionDesc()
                 )
             }
@@ -349,15 +341,19 @@ class SettingActivity : BaseActivity() {
         icon: ImageVector? = null,
         iconResId: Int? = null,
         iconPadding: Dp = 0.dp,
+        tintColor: Color? = androidx.compose.material.MaterialTheme.colors.textPrimaryColor,
         title: String,
         subtitle: String,
+        menuExpanded: Boolean = false,
+        onDismissRequest: (() -> Unit)? = null,
+        dropDownItems: (@Composable () -> Unit)? = null
     ) {
         ConstraintLayout(
             modifier = modifier
                 .fillMaxWidth()
                 .padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 20.dp)
         ) {
-            val (iconId, titleId, subtitleId) = createRefs()
+            val (iconId, titleId, subtitleId, dropDownMenu) = createRefs()
             if (icon != null) {
                 Icon(
                     modifier = Modifier
@@ -368,6 +364,7 @@ class SettingActivity : BaseActivity() {
                             bottom.linkTo(subtitleId.bottom)
                             start.linkTo(parent.start)
                         },
+                    tint = tintColor ?: LocalContentColor.current,
                     painter = rememberVectorPainter(image = icon),
                     contentDescription = null
                 )
@@ -381,6 +378,7 @@ class SettingActivity : BaseActivity() {
                             bottom.linkTo(subtitleId.bottom)
                             start.linkTo(parent.start)
                         },
+                    colorFilter = if (tintColor == null) null else ColorFilter.tint(tintColor),
                     painter = painterResource(id = iconResId!!),
                     contentDescription = null
                 )
@@ -405,6 +403,18 @@ class SettingActivity : BaseActivity() {
                 text = subtitle,
                 color = Color.Gray,
             )
+            if (dropDownItems != null) {
+                DropdownMenu(
+                    modifier = Modifier.constrainAs(dropDownMenu) {
+                        top.linkTo(subtitleId.bottom)
+                        start.linkTo(subtitleId.start)
+                    },
+                    expanded = menuExpanded,
+                    onDismissRequest = onDismissRequest!!
+                ) {
+                    dropDownItems()
+                }
+            }
         }
     }
 

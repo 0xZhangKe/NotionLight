@@ -2,6 +2,7 @@ package com.zhangke.notionlight.setting
 
 import android.app.Activity
 import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -10,6 +11,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zhangke.architect.daynight.DayNightHelper
 import com.zhangke.architect.daynight.DayNightMode
+import com.zhangke.architect.language.LanguageHelper
+import com.zhangke.architect.language.LanguageSettingType
 import com.zhangke.framework.utils.appContext
 import com.zhangke.framework.utils.toast
 import com.zhangke.notionlib.auth.NotionAuthorization
@@ -26,12 +29,6 @@ class SettingViewModel : ViewModel() {
     val userInfo = MutableLiveData<OauthToken?>(NotionAuthorization.getOauthToken())
 
     val currentDayNightMode = MutableLiveData<DayNightMode>()
-
-    val dayNightModeList = listOf(
-        DayNightMode.DAY,
-        DayNightMode.NIGHT,
-        DayNightMode.FOLLOW_SYSTEM,
-    )
 
     init {
         viewModelScope.launch {
@@ -58,8 +55,12 @@ class SettingViewModel : ViewModel() {
         }
     }
 
-    fun updateDayNight(mode: DayNightMode) {
-        DayNightHelper.setMode(mode)
+    fun getDayNightVm(mode: DayNightMode): DayNightSettingVm{
+        return mode.toDayNightVm()
+    }
+
+    fun updateDayNight(vm: DayNightSettingVm) {
+        DayNightHelper.setMode(vm.mode)
     }
 
     fun openAppMarket(activity: Activity) {
@@ -81,6 +82,23 @@ class SettingViewModel : ViewModel() {
         }
     }
 
+    fun getDayNightModeList(): List<DayNightSettingVm> {
+        return listOf(
+            DayNightMode.DAY.toDayNightVm(),
+            DayNightMode.NIGHT.toDayNightVm(),
+            DayNightMode.FOLLOW_SYSTEM.toDayNightVm(),
+        )
+    }
+
+    private fun DayNightMode.toDayNightVm(): DayNightSettingVm {
+        val name = when (this) {
+            DayNightMode.DAY -> appContext.getString(R.string.setting_page_day_night_day)
+            DayNightMode.NIGHT -> appContext.getString(R.string.setting_page_day_night_night)
+            DayNightMode.FOLLOW_SYSTEM -> appContext.getString(R.string.setting_page_day_night_system)
+        }
+        return DayNightSettingVm(this, name)
+    }
+
     fun feedbackByAppStore(activity: Activity) {
         openAppMarket(activity)
     }
@@ -98,4 +116,43 @@ class SettingViewModel : ViewModel() {
         val uri = Uri.parse(NotionLightConfig.FEEDBACK_GITHUB)
         activity.startActivity(Intent(Intent.ACTION_VIEW, uri))
     }
+
+    fun getSupportedLanguage(): List<LanguageSettingVm> {
+        return listOf(
+            LanguageSettingVm(
+                LanguageSettingType.CN,
+                appContext.getString(R.string.setting_language_zh)
+            ),
+            LanguageSettingVm(
+                LanguageSettingType.EN,
+                appContext.getString(R.string.setting_language_en)
+            ),
+            LanguageSettingVm(
+                LanguageSettingType.SYSTEM,
+                appContext.getString(R.string.setting_language_system)
+            ),
+        )
+    }
+
+    fun getCurrentLanguage(): LanguageSettingVm {
+        val currentType = LanguageHelper.currentType
+        return getSupportedLanguage().firstOrNull { it.type == currentType } ?: LanguageSettingVm(
+            LanguageSettingType.SYSTEM,
+            appContext.getString(R.string.setting_language_system)
+        )
+    }
+
+    fun setLanguage(context: Context, language: LanguageSettingVm) {
+        LanguageHelper.setLanguage(context, language.type)
+    }
+
+    data class LanguageSettingVm(
+        val type: LanguageSettingType,
+        val name: String
+    )
+
+    data class DayNightSettingVm(
+        val mode: DayNightMode,
+        val name: String
+    )
 }
