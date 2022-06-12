@@ -34,15 +34,12 @@ object LanguageHelper {
         this.application = application
         systemLocale = Locale.getDefault()
         currentType = readLocalFromStorage() ?: LanguageSettingType.SYSTEM
-        setupLanguage(application)
-        application.registerActivityLifecycleCallbacks(OnActivityCreated {
-            setupLanguage(it)
-        })
+        application.changeLanguage(currentType)
 
         application.registerActivityLifecycleCallbacks(object : SimpleActivityLifecycle() {
 
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-                setupLanguage(activity)
+                activity.changeLanguage(currentType)
                 super.onActivityCreated(activity, savedInstanceState)
             }
 
@@ -63,25 +60,26 @@ object LanguageHelper {
         })
     }
 
-    private fun setupLanguage(context: Context) {
-        setLanguage(context, currentType, false)
+    fun setLanguage(context: Context, type: LanguageSettingType) {
+        this.currentType = type
+        saveLocalToStorage(type)
+        context.changeLanguage(type)
+        if (context != application) {
+            application.changeLanguage(currentType)
+        }
+        notifyOtherActivityConfig()
     }
 
-    fun setLanguage(context: Context, type: LanguageSettingType, needSave: Boolean = true) {
-        this.currentType = type
-        val resources = context.resources
+    private fun Context.changeLanguage(type: LanguageSettingType){
         val metrics = resources.displayMetrics
         val configuration = resources.configuration
         configuration.setLocale(type.toLocale())
         resources.updateConfiguration(configuration, metrics)
-        if (needSave) {
-            saveLocalToStorage(type)
-        }
-        if (context != application) {
-            setLanguage(application, currentType, false)
-            pausedActivityList.mapNotNull { it.get() }
-                .forEach { it.recreate() }
-        }
+    }
+
+    private fun notifyOtherActivityConfig(){
+        pausedActivityList.mapNotNull { it.get() }
+            .forEach { it.recreate() }
     }
 
     private fun saveLocalToStorage(type: LanguageSettingType) {

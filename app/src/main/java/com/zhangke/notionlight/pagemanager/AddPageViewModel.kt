@@ -39,8 +39,14 @@ class AddPageViewModel : ViewModel() {
                 .firstOrNull()
                 ?.map { it.id }
                 ?.toSet()
-            notionPageList.emit(allPage.map {
-                PageToAdded(it, it.getTitle(), addedPage?.contains(it.id) ?: false)
+                ?: emptySet()
+            notionPageList.emit(allPage.mapNotNull {
+                val title = it.getTitle()
+                if (title.isNotEmpty()) {
+                    PageToAdded(it, title, addedPage.contains(it.id))
+                } else {
+                    null
+                }
             })
             withContext(Dispatchers.Main) {
                 loading.value = false

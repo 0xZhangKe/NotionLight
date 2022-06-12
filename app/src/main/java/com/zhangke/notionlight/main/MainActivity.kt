@@ -126,14 +126,11 @@ class MainActivity : BaseActivity() {
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
 
             override fun onTabSelected(tab: TabLayout.Tab) {
-                val tabTextView = fetchTextView(tabLayout, tab.position) ?: return
-                tabTextView.setTypeface(tabTextView.typeface, Typeface.BOLD)
-
+                fetchTextView(tabLayout, tab.position)?.updateBoldStyle(true)
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab) {
-                val tabTextView = fetchTextView(tabLayout, tab.position) ?: return
-                tabTextView.setTypeface(null, Typeface.NORMAL)
+                fetchTextView(tabLayout, tab.position)?.updateBoldStyle(false)
             }
 
             override fun onTabReselected(tab: TabLayout.Tab?) {
@@ -159,6 +156,18 @@ class MainActivity : BaseActivity() {
             ((tabLayout.getChildAt(0) as? ViewGroup)?.getChildAt(position) as? ViewGroup)
                 ?: return null
         return (tabContainer.getChildAt(1) as? TextView) ?: return null
+    }
+
+    private fun TextView.updateBoldStyle(bold: Boolean) {
+        if (bold) {
+            setTypeface(typeface, Typeface.BOLD)
+        } else {
+            setTypeface(null, Typeface.NORMAL)
+        }
+        measure(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        layoutParams.height = measuredHeight
+        layoutParams.width = measuredWidth
+        requestLayout()
     }
 
     class PageAdapter(activity: FragmentActivity, private val pageList: List<NotionPageConfig>) :
