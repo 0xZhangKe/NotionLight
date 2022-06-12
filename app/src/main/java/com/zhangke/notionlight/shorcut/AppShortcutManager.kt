@@ -19,6 +19,7 @@ object AppShortcutManager {
 
     init {
         ApplicationScope.launch {
+            ShortcutManagerCompat.removeAllDynamicShortcuts(appContext)
             val pageList = withContext(Dispatchers.IO) {
                 NotionPageConfigRepo.getPageConfigList()
                     .firstOrNull()
