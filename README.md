@@ -1,4 +1,3 @@
-# NotionLight
 A quick and lightweight Notion app.
 
 Adding a page from your Notion will map the contents of the page to a list, supporting add/delete and modify operations. If you have pages in your Notion that are organised like a list, you can add them to NotionLight, which is more efficient and can be used as quick notes or TODO, based on the Notion Api implementation.
