@@ -3,8 +3,10 @@ package com.zhangke.notionlight.shorcut
 import android.content.Intent
 import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat
+import androidx.core.graphics.drawable.IconCompat
 import com.zhangke.architect.coroutines.ApplicationScope
 import com.zhangke.framework.utils.appContext
+import com.zhangke.notionlight.R
 import com.zhangke.notionlight.addblock.AddBlockActivity
 import com.zhangke.notionlight.config.NotionPageConfig
 import com.zhangke.notionlight.config.NotionPageConfigRepo
@@ -39,6 +41,7 @@ object AppShortcutManager {
             .setShortLabel(title)
             .setLongLabel(title)
             .setIntent(intent)
+            .setIcon(IconCompat.createWithResource(appContext, R.mipmap.ic_launcher))
             .build()
     }
 }
