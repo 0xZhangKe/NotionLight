@@ -24,7 +24,7 @@ object NotionAuthorization {
 
     private const val TAG = "NotionAuthorization"
 
-    const val REDIRECT_URL = "https://notionauth.zhangkenotion.net/auth"
+    const val REDIRECT_URL = "https://0xzhangke.github.io/notion_light_oauth_result.html"
 
     private var token: OauthToken? = null
 
