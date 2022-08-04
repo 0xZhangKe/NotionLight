@@ -90,6 +90,7 @@ class AddPageActivity : BaseActivity() {
                         var checked: Boolean by remember {
                             mutableStateOf(item.added)
                         }
+                        item.added = checked
                         Surface(
                             contentColor = Color.White,
                             modifier = Modifier
@@ -105,7 +106,6 @@ class AddPageActivity : BaseActivity() {
                                     checked = checked,
                                     onCheckedChange = {
                                         checked = it
-                                        item.added = checked
                                     })
                                 PrimaryText(
                                     text = item.title
