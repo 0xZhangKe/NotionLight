@@ -31,7 +31,7 @@
             android:name="com.zhangke.notionlight.addblock.AddBlockActivity"
             android:exported="true"
             android:launchMode="singleTask"
-            android:theme="@style/Theme.NotionTodo.Transparent" >
+            android:theme="@style/Theme.NotionTodo.Transparent">
 
             <intent-filter>
                 <action android:name="com.zhangke.notion.ADD_BLOCK" />
@@ -76,5 +76,9 @@
                     android:scheme="https" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".draft.DraftBoxActivity"
+            android:exported="true" />
     </application>
 </manifest>

@@ -23,35 +23,22 @@ import com.zhangke.architect.theme.AppMaterialTheme
 import com.zhangke.architect.theme.PrimaryText
 import com.zhangke.framework.utils.StatusBarUtils
 import com.zhangke.framework.utils.toast
+import com.zhangke.notionlib.data.NotionBlock
 import com.zhangke.notionlib.ext.getLightText
 import com.zhangke.notionlight.R
 import com.zhangke.notionlight.composable.AppColor
-import com.zhangke.notionlight.support.supportedEditType
-import kotlinx.coroutines.flow.MutableSharedFlow
 
-/**
- * add block
- * edit block
- * edit draft
- */
-class EditBlockActivity : BaseActivity() {
+class EditBlockActivityBack : BaseActivity() {
 
     companion object {
 
-        const val INTENT_ARG_DRAFT_ID = "intent_arg_draft_id"
         const val INTENT_ARG_PAGE_ID = "intent_arg_page_id"
         const val INTENT_ARG_BLOCK_ID = "intent_arg_block_id"
 
-        fun open(
-            activity: Activity,
-            draftId: Long? = null,
-            pageId: String? = null,
-            blockId: String? = null
-        ) {
-            val intent = Intent(activity, EditBlockActivity::class.java).apply {
-                putExtra(INTENT_ARG_DRAFT_ID, draftId)
+        fun open(activity: Activity, pageId: String, block: NotionBlock) {
+            val intent = Intent(activity, EditBlockActivityBack::class.java).apply {
                 putExtra(INTENT_ARG_PAGE_ID, pageId)
-                putExtra(INTENT_ARG_BLOCK_ID, blockId)
+                putExtra(INTENT_ARG_BLOCK_ID, block.id)
             }
             activity.startActivity(intent)
         }
@@ -157,13 +144,3 @@ class EditBlockActivity : BaseActivity() {
         }
     }
 }
-
-class NotionBlockViewState(
-    val currentPage: MutableSharedFlow<EditBlockViewModel.NotionPage> = MutableSharedFlow(),
-    val pageList: MutableSharedFlow<List<EditBlockViewModel.NotionPage>> = MutableSharedFlow(),
-    val canEditPage: MutableSharedFlow<Boolean> = MutableSharedFlow(),
-    val blockTypeList: Array<String> = supportedEditType,
-    val blockType: MutableSharedFlow<String> = MutableSharedFlow(),
-    val content: MutableSharedFlow<String?> = MutableSharedFlow(),
-    val savingState: MutableSharedFlow<String> = MutableSharedFlow()
-)

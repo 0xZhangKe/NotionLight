@@ -112,4 +112,8 @@
     <string name="edit_block_success">Modified successfully</string>
 
     <string name="helper_page_title">Help</string>
+
+    <string name="draft_not_found">draft not found!</string>
+
+    <string name="get_notion_page_error">Get page info error!</string>
 </resources>

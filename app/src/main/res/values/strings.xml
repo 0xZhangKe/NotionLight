@@ -112,4 +112,8 @@
     <string name="edit_block_success">修改成功</string>
 
     <string name="helper_page_title">帮助</string>
+
+    <string name="draft_not_found">draft not found!</string>
+
+    <string name="get_notion_page_error">页面信息获取失败!</string>
 </resources>
