@@ -53,6 +53,12 @@ dependencies {
     implementation support.'datastore-preferences'
     implementation support.datastore
     implementation support.material
+    implementation support.fragment
+    implementation support.'fragment-ktx'
+
+    implementation arch.lifecycle.process
+    kapt           arch.lifecycle.compiler
+    implementation arch.lifecycle.'common-java8'
 
     implementation thirdparty.okhttp3
     implementation thirdparty.'okhttp3-logging'

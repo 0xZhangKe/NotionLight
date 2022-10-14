@@ -64,7 +64,7 @@ object NotionRepo {
         }
     }
 
-    suspend fun queryBlock(
+    private suspend fun queryBlock(
         blockId: String,
         startCursor: String? = null
     ): NotionResponse<NotionListEntry<NotionBlock>> {

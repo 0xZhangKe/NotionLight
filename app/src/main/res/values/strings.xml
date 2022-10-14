@@ -38,7 +38,7 @@
     <string name="auth_manually_input_hint">请输入完整的回调链接</string>
     <string name="auth_manually_input_error">这个不对</string>
 
-    <string name="add_block_item_page_type">添加页面</string>
+    <string name="add_block_item_page_type">当前页面</string>
     <string name="add_block_item_block_type">内容类型</string>
 
     <string name="input_empty">请输入内容</string>

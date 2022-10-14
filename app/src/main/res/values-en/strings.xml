@@ -38,7 +38,7 @@
     <string name="auth_manually_input_hint">Please enter the full callback link</string>
     <string name="auth_manually_input_error">This is not correct</string>
 
-    <string name="add_block_item_page_type">Add page</string>
+    <string name="add_block_item_page_type">Current Page</string>
     <string name="add_block_item_block_type">Content Type</string>
 
     <string name="input_empty">Please enter content</string>

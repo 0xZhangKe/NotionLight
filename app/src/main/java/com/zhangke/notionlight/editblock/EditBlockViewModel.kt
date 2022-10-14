@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.zhangke.framework.utils.appContext
 import com.zhangke.framework.utils.toast
 import com.zhangke.notionlib.NotionRepo
 import com.zhangke.notionlib.data.NotionBlock
@@ -17,6 +18,7 @@ import com.zhangke.notionlight.config.NotionPageConfig
 import com.zhangke.notionlight.config.NotionPageConfigRepo
 import com.zhangke.notionlight.draft.DraftBoxManager
 import com.zhangke.notionlight.draft.db.DraftEntry
+import com.zhangke.notionlight.support.supportedEditType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.catch
@@ -25,12 +27,12 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.*
 import kotlin.properties.Delegates
 
 class EditBlockViewModel : ViewModel() {
 
-    val viewStates = NotionBlockViewState()
+    val viewStatesCombiner = NotionBlockViewStatesCombiner()
 
     private val pageListFlow = MutableSharedFlow<List<NotionPageConfig>>(1)
     private val draftEntryFlow = MutableSharedFlow<DraftEntry>(1)
@@ -52,7 +54,7 @@ class EditBlockViewModel : ViewModel() {
             val list = NotionPageConfigRepo.getPageConfigList()
                 .catch { }
                 .first()
-            viewStates.pageList.emit(list.map { NotionPage(it.title, it.id) })
+            viewStatesCombiner.pageList.emit(list.map { NotionPage(it.title, it.id) })
             pageListFlow.emit(list)
         }
     }
@@ -69,7 +71,9 @@ class EditBlockViewModel : ViewModel() {
         currentDraftId = draftId ?: DraftBoxManager.generateId()
         val isEditModel = draftId == null && blockId != null
         this.blockId = blockId
-        viewStates.canEditPage.tryEmit(isEditModel)
+        viewStatesCombiner.title
+            .tryEmit(appContext.getString(if (blockId != null) R.string.edit_block_page_title else R.string.add_block_title))
+        viewStatesCombiner.canEditPage.tryEmit(isEditModel)
         initSharedDataByParams(draftId, blockId)
         initState(pageId, draftId, blockId)
     }
@@ -104,7 +108,7 @@ class EditBlockViewModel : ViewModel() {
                 toast(R.string.get_notion_page_error, Toast.LENGTH_LONG)
                 return@launch
             }
-            viewStates.currentPage.emit(NotionPage(pageConfig.title, pageConfig.id))
+            viewStatesCombiner.currentPage.emit(NotionPage(pageConfig.title, pageConfig.id))
             initBlockType(pageConfig.id, draftId, blockId)
             initBlockContent(draftId, blockId)
         }
@@ -115,16 +119,12 @@ class EditBlockViewModel : ViewModel() {
         draftId: Long?,
         blockId: String?
     ): NotionPageConfig? {
-        val config = if (pageId != null) {
-            getPageConfigByPageId(pageId)
-        } else if (draftId != null) {
-            getPageConfigByDraft()
-        } else if (blockId != null) {
-            getPageConfigByBlockId()
-        } else {
-            null
+        return when {
+            pageId != null -> getPageConfigByPageId(pageId)
+            draftId != null -> getPageConfigByDraft()
+            blockId != null -> getPageConfigByBlockId()
+            else -> null
         }
-        return config
     }
 
     private suspend fun getPageConfigByPageId(pageId: String): NotionPageConfig? {
@@ -148,7 +148,7 @@ class EditBlockViewModel : ViewModel() {
             blockId != null -> getBlockTypeByBlockId()
             else -> getBlockTypeByPageId(pageId)
         } ?: BlockType.PARAGRAPH
-        viewStates.blockType.emit(blockType)
+        viewStatesCombiner.currentBlockType.emit(blockType)
     }
 
     private suspend fun getBlockTypeByDraft(): String? {
@@ -184,14 +184,12 @@ class EditBlockViewModel : ViewModel() {
     }
 
     private suspend fun initBlockContent(draftId: Long?, blockId: String?) {
-        val blockContent = if (draftId != null) {
-            getBlockContentByDraft()
-        } else if (blockId != null) {
-            getBlockContentByBlockId()
-        } else {
-            return
+        val blockContent = when {
+            draftId != null -> getBlockContentByDraft()
+            blockId != null -> getBlockContentByBlockId()
+            else -> return
         }
-        viewStates.content.emit(blockContent)
+        viewStatesCombiner.content.emit(blockContent.orEmpty())
     }
 
     private suspend fun getBlockContentByDraft(): String? {
@@ -203,67 +201,79 @@ class EditBlockViewModel : ViewModel() {
     }
 
     fun onInputContentChanged(newContent: String) {
-        viewStates.content.tryEmit(newContent)
+        viewStatesCombiner.content.tryEmit(newContent)
         saveDraft()
     }
 
     private fun getCurrentTime(): String {
-        val format = SimpleDateFormat("HH:mm:ss")
+        val format = SimpleDateFormat("HH:mm:ss", Locale.ROOT)
         return format.format(Date())
     }
 
     fun onPageSelected(newPage: NotionPage) {
-        viewStates.currentPage.tryEmit(newPage)
+        viewStatesCombiner.currentPage.tryEmit(newPage)
         saveDraft()
     }
 
     fun onBlockTypeChanged(newType: String) {
-        viewStates.blockType.tryEmit(newType)
+        viewStatesCombiner.currentBlockType.tryEmit(newType)
         saveDraft()
     }
 
     private fun saveDraft() {
         viewModelScope.launch {
-            viewStates.savingState.emit("Saving...")
-            val content = viewStates.content.first().orEmpty()
-            val currentPageId = viewStates.currentPage.first().pageId
-            val currentBlockType = viewStates.blockType.first()
+            viewStatesCombiner.savingState.emit("Saving...")
+            val content = viewStatesCombiner.content.first().orEmpty()
+            val currentPageId = viewStatesCombiner.currentPage.first().pageId
+            val currentBlockType = viewStatesCombiner.currentBlockType.first()
             DraftBoxManager.saveDraft(currentDraftId, currentPageId, currentBlockType, content)
-            viewStates.savingState.emit("Draft saved on ${getCurrentTime()}")
+            viewStatesCombiner.savingState.emit("Draft saved on ${getCurrentTime()}")
         }
     }
 
     fun onConfirm() {
         viewModelScope.launch {
+            val page = viewStatesCombiner.currentPage.first()
+            val blockType = viewStatesCombiner.currentBlockType.first()
+            if (!supportedEditType.contains(blockType)) {
+                toast(R.string.unsupported_append_block_type)
+                return@launch
+            }
+            val content = viewStatesCombiner.content.firstOrNull().orEmpty()
             if (blockId != null) {
-                requestEditBlock(blockId!!)
+                requestUpdateBlock(savedNotionBlock.first().notionBlock, content, page.pageId)
             } else {
-                requestNewBlock()
+                requestAddNewBlock(page.pageId, content, blockType)
             }
         }
     }
 
-    private suspend fun requestEditBlock(blockId: String) {
-
-    }
-
-    private suspend fun requestNewBlock() {
-
-    }
-
-    fun update(content: String) {
-        val block = block.value ?: return
-        viewModelScope.launch {
-            val response = NotionRepo.updateBlock(block, content)
-            response.onError {
-                toast(it.message)
-            }
-
-            response.onSuccess {
-                onAddSuccess?.invoke()
-                NotionPageSyncHelper.sync(pageId)
-            }
+    private suspend fun requestUpdateBlock(block: NotionBlock, content: String, pageId: String) {
+        val response = NotionRepo.updateBlock(block, content)
+        response.onSuccess {
+            NotionPageSyncHelper.sync(pageId)
+            deleteDraft()
+            viewStatesCombiner.applyBlockState.emit(true to appContext.getString(R.string.edit_block_success))
         }
+        response.onError {
+            viewStatesCombiner.applyBlockState.emit(false to it.message)
+        }
+    }
+
+    private suspend fun requestAddNewBlock(pageId: String, content: String, blockType: String) {
+        val response = NotionRepo.appendBlock(content, pageId, blockType)
+        response.onSuccess {
+            NotionPageSyncHelper.sync(pageId)
+            deleteDraft()
+            viewStatesCombiner.applyBlockState.emit(true to appContext.getString(R.string.add_block_success))
+        }
+        response.onError {
+            viewStatesCombiner.applyBlockState.emit(false to it.message)
+        }
+    }
+
+    private suspend fun deleteDraft() {
+        DraftBoxManager.deleteDraft(currentDraftId)
     }
 
     class NotionPage(

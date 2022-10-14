@@ -20,8 +20,8 @@ object DraftBoxManager {
         draftDao.insert(DraftEntry(id, pageId = pageId, blockType = blockType, content = content))
     }
 
-    suspend fun syncDraft(draft: DraftEntry) {
-
+    suspend fun deleteDraft(draftId: Long) {
+        draftDao.deleteByDraftId(draftId)
     }
 
     fun collectAllDraft(): Flow<List<DraftEntry>> {

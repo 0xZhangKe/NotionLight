@@ -13,7 +13,7 @@ import javax.net.ssl.*
 
 object GlobalOkHttpClient {
 
-    private const val TIMEOUT = 30L
+    private const val TIMEOUT = 15L
 
     val client: OkHttpClient by lazy { createBuilder().build() }
 

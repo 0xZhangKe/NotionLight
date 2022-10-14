@@ -38,8 +38,8 @@ interface DraftBoxDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entry: DraftEntry)
 
-    @Delete
-    suspend fun delete(entry: DraftEntry)
+    @Query("DELETE FROM $DRAFT_TABLE_NAME WHERE draftId=:draftId")
+    suspend fun deleteByDraftId(draftId: Long)
 }
 
 @Database(entities = [DraftEntry::class], version = DB_VERSION)

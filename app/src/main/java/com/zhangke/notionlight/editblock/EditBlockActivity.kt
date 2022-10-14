@@ -6,33 +6,38 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zhangke.architect.activity.BaseActivity
+import com.zhangke.architect.coroutines.collectWithLifecycle
 import com.zhangke.architect.theme.AppMaterialTheme
 import com.zhangke.architect.theme.PrimaryText
 import com.zhangke.framework.utils.StatusBarUtils
 import com.zhangke.framework.utils.toast
-import com.zhangke.notionlib.ext.getLightText
 import com.zhangke.notionlight.R
 import com.zhangke.notionlight.composable.AppColor
 import com.zhangke.notionlight.support.supportedEditType
 import kotlinx.coroutines.flow.MutableSharedFlow
 
 /**
- * add block
- * edit block
- * edit draft
+ * Supported:
+ * - add block
+ * - edit block
+ * - edit draft
  */
 class EditBlockActivity : BaseActivity() {
 
@@ -61,23 +66,41 @@ class EditBlockActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         val vm: EditBlockViewModel by viewModels()
         vm.parseIntent(intent)
+        val viewStateCombiner = vm.viewStatesCombiner
         setContent {
             AppMaterialTheme {
-                PageScreen(vm = vm)
+                ApplyBlockPage(
+                    viewStateCombiner,
+                    onContentChanged = { vm.onInputContentChanged(it) },
+                    onConfirmClick = { vm.onConfirm() },
+                    onCancelClick = { finish() },
+                    onPageSelected = { vm.onPageSelected(it) },
+                    onBlockTypeSelected = { vm.onBlockTypeChanged(it) }
+                )
             }
         }
-        vm.onAddSuccess = {
-            toast(R.string.edit_block_success)
-            finish()
-        }
+
+        viewStateCombiner
+            .applyBlockState
+            .collectWithLifecycle(this) {
+                toast(it.second)
+                if (it.first) {
+                    finish()
+                }
+            }
     }
 
     @Composable
-    fun PageScreen(vm: EditBlockViewModel) {
+    fun ApplyBlockPage(
+        viewStatesCombiner: NotionBlockViewStatesCombiner,
+        onContentChanged: (String) -> Unit,
+        onCancelClick: () -> Unit,
+        onConfirmClick: () -> Unit,
+        onPageSelected: (page: EditBlockViewModel.NotionPage) -> Unit,
+        onBlockTypeSelected: (blockType: String) -> Unit
+    ) {
         val statusBarHeight by remember { mutableStateOf(StatusBarUtils.getStatusBarHeight()) }
-        val originText = vm.block.observeAsState().value?.getLightText().orEmpty()
-        var inputtedText by remember { mutableStateOf("") }
-        val textFieldText = inputtedText.ifEmpty { originText }
+        val currentBlockContent by viewStatesCombiner.content.collectAsState(initial = "")
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -95,16 +118,29 @@ class EditBlockActivity : BaseActivity() {
                 ) {
                     PrimaryText(
                         modifier = Modifier.padding(top = 15.dp),
-                        text = getString(R.string.edit_block_page_title),
+                        text = viewStatesCombiner.title.collectAsState(initial = "").value,
+                        fontWeight = FontWeight.Bold,
                         fontSize = 18.sp
                     )
 
+                    PageSelector(
+                        pageList = viewStatesCombiner.pageList.collectAsState(initial = emptyList()).value,
+                        currentPage = viewStatesCombiner.currentPage.collectAsState(initial = null).value,
+                        canEditPage = viewStatesCombiner.canEditPage.collectAsState(initial = false).value,
+                        onPageSelected = onPageSelected
+                    )
+
+                    BlockTypeSelector(
+                        blockTypeList = viewStatesCombiner.blockTypeList,
+                        currentBlockType = viewStatesCombiner.currentBlockType
+                            .collectAsState(initial = null).value,
+                        onBlockTypeSelected = onBlockTypeSelected
+                    )
+
                     TextField(
-                        value = textFieldText,
+                        value = currentBlockContent,
                         shape = RoundedCornerShape(6.dp),
-                        onValueChange = {
-                            inputtedText = it
-                        },
+                        onValueChange = onContentChanged,
                         colors = TextFieldDefaults.textFieldColors(
                             backgroundColor = Color(0x99CCCCCC),
                             focusedIndicatorColor = Color.Transparent,
@@ -125,9 +161,7 @@ class EditBlockActivity : BaseActivity() {
                 Button(
                     colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.surface),
                     shape = RoundedCornerShape(30.dp),
-                    onClick = {
-                        finish()
-                    }
+                    onClick = onCancelClick
                 ) {
                     PrimaryText(
                         textAlign = TextAlign.Center,
@@ -141,9 +175,7 @@ class EditBlockActivity : BaseActivity() {
                 Button(
                     colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.surface),
                     shape = RoundedCornerShape(30.dp),
-                    onClick = {
-                        vm.update(inputtedText)
-                    }
+                    onClick = onConfirmClick
                 ) {
                     PrimaryText(
                         textAlign = TextAlign.Center,
@@ -156,14 +188,118 @@ class EditBlockActivity : BaseActivity() {
             Spacer(modifier = Modifier.weight(3F))
         }
     }
+
+    @Composable
+    fun ColumnScope.PageSelector(
+        pageList: List<EditBlockViewModel.NotionPage>,
+        currentPage: EditBlockViewModel.NotionPage?,
+        canEditPage: Boolean,
+        onPageSelected: (page: EditBlockViewModel.NotionPage) -> Unit
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp, 15.dp, 20.dp, 0.dp)
+        ) {
+            PrimaryText(text = getString(R.string.add_block_item_page_type))
+            Spacer(modifier = Modifier.weight(1F))
+
+            if (currentPage == null) return
+
+            if (canEditPage) {
+                var pageTypeExpanded by remember { mutableStateOf(false) }
+                Column {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.clickable {
+                            pageTypeExpanded = true
+                        }
+                    ) {
+                        PrimaryText(text = currentPage.pageName)
+                        androidx.compose.material3.Icon(
+                            modifier = Modifier.padding(start = 3.dp),
+                            painter = rememberVectorPainter(image = Icons.Filled.ArrowDropDown),
+                            contentDescription = "Select other"
+                        )
+                    }
+                    DropdownMenu(
+                        expanded = pageTypeExpanded,
+                        onDismissRequest = { pageTypeExpanded = false }) {
+                        pageList.forEach {
+                            DropdownMenuItem(onClick = {
+                                pageTypeExpanded = false
+                                onPageSelected(it)
+                            }) {
+                                PrimaryText(text = it.pageName)
+                            }
+                        }
+                    }
+                }
+            } else {
+                PrimaryText(
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                    text = currentPage.pageName
+                )
+            }
+        }
+    }
+
+    @Composable
+    fun ColumnScope.BlockTypeSelector(
+        blockTypeList: Array<String>,
+        currentBlockType: String?,
+        onBlockTypeSelected: (blockType: String) -> Unit
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp, 15.dp, 20.dp, 0.dp)
+        ) {
+            PrimaryText(text = getString(R.string.add_block_item_block_type))
+            Spacer(modifier = Modifier.weight(1F))
+
+            currentBlockType ?: return
+
+            var blockTypeExpanded by remember { mutableStateOf(false) }
+            Column {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.clickable {
+                        blockTypeExpanded = true
+                    }
+                ) {
+                    PrimaryText(text = currentBlockType)
+                    androidx.compose.material3.Icon(
+                        modifier = Modifier.padding(start = 3.dp),
+                        painter = rememberVectorPainter(image = Icons.Filled.ArrowDropDown),
+                        contentDescription = "Select other content type"
+                    )
+                }
+                DropdownMenu(
+                    expanded = blockTypeExpanded,
+                    onDismissRequest = { blockTypeExpanded = false }) {
+                    blockTypeList.forEach {
+                        DropdownMenuItem(onClick = {
+                            blockTypeExpanded = false
+                            onBlockTypeSelected(it)
+                        }) {
+                            PrimaryText(text = it)
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
-class NotionBlockViewState(
+class NotionBlockViewStatesCombiner(
+    val title: MutableSharedFlow<String> = MutableSharedFlow(),
     val currentPage: MutableSharedFlow<EditBlockViewModel.NotionPage> = MutableSharedFlow(),
     val pageList: MutableSharedFlow<List<EditBlockViewModel.NotionPage>> = MutableSharedFlow(),
     val canEditPage: MutableSharedFlow<Boolean> = MutableSharedFlow(),
     val blockTypeList: Array<String> = supportedEditType,
-    val blockType: MutableSharedFlow<String> = MutableSharedFlow(),
-    val content: MutableSharedFlow<String?> = MutableSharedFlow(),
-    val savingState: MutableSharedFlow<String> = MutableSharedFlow()
+    val currentBlockType: MutableSharedFlow<String> = MutableSharedFlow(),
+    val content: MutableSharedFlow<String> = MutableSharedFlow(),
+    val savingState: MutableSharedFlow<String> = MutableSharedFlow(),
+    val applyBlockState: MutableSharedFlow<Pair<Boolean, String>> = MutableSharedFlow(),
 )
