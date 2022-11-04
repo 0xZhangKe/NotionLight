@@ -86,7 +86,7 @@ class AuthorizationActivity : BaseActivity() {
                 .fillMaxSize()
                 .background(AppColor.translucentBackground),
         ) {
-            val screenDp = resources.displayMetrics.heightPixels * 0.3F
+            val screenHeightPx = resources.displayMetrics.heightPixels * 0.3F
             val hide by vm.authSuccess.observeAsState(false)
             if (hide) {
                 SideEffect {
@@ -99,7 +99,7 @@ class AuthorizationActivity : BaseActivity() {
             }
             AnimatedVisibility(
                 modifier = Modifier
-                    .padding(top = screenDp.toDp().dp)
+                    .padding(top = screenHeightPx.toDp.dp)
                     .background(
                         MaterialTheme.colors.surface,
                         shape = RoundedCornerShape(30.dp, 30.dp, 0.dp, 0.dp)

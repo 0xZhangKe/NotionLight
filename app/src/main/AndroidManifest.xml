@@ -28,17 +28,6 @@
             android:exported="true" />
 
         <activity
-            android:name="com.zhangke.notionlight.addblock.AddBlockActivity"
-            android:exported="true"
-            android:launchMode="singleTask"
-            android:theme="@style/Theme.NotionTodo.Transparent">
-
-            <intent-filter>
-                <action android:name="com.zhangke.notion.ADD_BLOCK" />
-            </intent-filter>
-        </activity>
-
-        <activity
             android:name="com.zhangke.notionlight.setting.SettingActivity"
             android:exported="true" />
 
@@ -53,7 +42,13 @@
         <activity
             android:name="com.zhangke.notionlight.editblock.EditBlockActivity"
             android:exported="true"
-            android:theme="@style/Theme.NotionTodo.Transparent" />
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.NotionTodo.Transparent" >
+
+            <intent-filter>
+                <action android:name="com.zhangke.notion.ADD_BLOCK" />
+            </intent-filter>
+        </activity>
 
         <activity
             android:name="com.zhangke.notionlight.setting.HelpActivity"

@@ -27,10 +27,10 @@ object NotionPageConfigRepo {
             .deletePage(configs)
     }
 
-    suspend fun insetBlocks(pageId: String, block: List<NotionBlock>) {
+    suspend fun insetOrUpdateBlocks(pageId: String, block: List<NotionBlock>) {
         NotionPageDataBase.instance
             .blockInPageDao()
-            .insetBlocks(block.map {
+            .insetOrUpdateBlocks(block.map {
                 NotionBlockInPage(
                     it.id,
                     pageId,

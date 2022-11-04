@@ -182,12 +182,12 @@ class PageFragment : Fragment() {
                     )
                 }
 
-                if (viewModel.isBlockSupportEdit(block)) {
+                if (viewModel.isBlockEditable(block)) {
                     Surface(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
-                                EditBlockActivity.open(requireActivity(), pageId, block)
+                                EditBlockActivity.open(requireActivity(), pageId = pageId, blockId = block.id)
                                 onDismissRequest()
                             }
                             .padding(25.dp, 10.dp, 25.dp, 10.dp)

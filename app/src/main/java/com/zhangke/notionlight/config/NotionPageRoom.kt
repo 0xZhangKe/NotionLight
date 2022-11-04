@@ -51,7 +51,7 @@ interface NotionPageConfigDao {
 interface NotionBlockInPageDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insetBlocks(block: List<NotionBlockInPage>)
+    suspend fun insetOrUpdateBlocks(block: List<NotionBlockInPage>)
 
     @Query("SELECT * FROM $BLOCK_TABLE_NAME WHERE id == :blockId")
     suspend fun queryBlock(blockId: String): NotionBlockInPage?

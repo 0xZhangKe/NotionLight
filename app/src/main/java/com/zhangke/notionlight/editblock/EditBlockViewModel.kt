@@ -12,7 +12,7 @@ import com.zhangke.notionlib.data.NotionBlock
 import com.zhangke.notionlib.data.block.BlockType
 import com.zhangke.notionlib.ext.getLightText
 import com.zhangke.notionlight.R
-import com.zhangke.notionlight.addblock.NotionPageSyncHelper
+import com.zhangke.notionlight.editblock.NotionPageSyncHelper
 import com.zhangke.notionlight.config.NotionBlockInPage
 import com.zhangke.notionlight.config.NotionPageConfig
 import com.zhangke.notionlight.config.NotionPageConfigRepo
@@ -42,8 +42,6 @@ class EditBlockViewModel : ViewModel() {
     private var blockId: String? = null
 
     var block = MutableLiveData<NotionBlock?>()
-
-    var onAddSuccess: (() -> Unit)? = null
 
     init {
         initSharedData()

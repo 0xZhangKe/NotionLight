@@ -34,8 +34,8 @@ import com.zhangke.architect.coil.CoilImageLoader
 import com.zhangke.architect.theme.AppMaterialTheme
 import com.zhangke.architect.theme.PrimaryText
 import com.zhangke.notionlight.R
-import com.zhangke.notionlight.addblock.AddBlockActivity
 import com.zhangke.notionlight.config.NotionPageConfig
+import com.zhangke.notionlight.editblock.EditBlockActivity
 import com.zhangke.notionlight.pagemanager.AddPageActivity
 import com.zhangke.notionlight.setting.SettingActivity
 
@@ -57,9 +57,9 @@ class MainActivity : BaseActivity() {
 
         setSupportActionBar(toolbar)
         floating.setOnClickListener {
-            val pageIndex = viewModel.pageConfigList.value?.getOrNull(viewPager.currentItem)?.id
+            val pageId = viewModel.pageConfigList.value?.getOrNull(viewPager.currentItem)?.id
                 ?: return@setOnClickListener
-            AddBlockActivity.open(this, pageIndex)
+            EditBlockActivity.open(this, pageId = pageId)
         }
 
         viewModel.pageConfigList

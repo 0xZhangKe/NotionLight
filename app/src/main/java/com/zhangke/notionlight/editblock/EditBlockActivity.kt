@@ -43,8 +43,10 @@ class EditBlockActivity : BaseActivity() {
 
     companion object {
 
-        const val INTENT_ARG_DRAFT_ID = "intent_arg_draft_id"
+        const val ACTION_ADD_BLOCK = "com.zhangke.notion.ADD_BLOCK"
+
         const val INTENT_ARG_PAGE_ID = "intent_arg_page_id"
+        const val INTENT_ARG_DRAFT_ID = "intent_arg_draft_id"
         const val INTENT_ARG_BLOCK_ID = "intent_arg_block_id"
 
         fun open(
@@ -104,12 +106,14 @@ class EditBlockActivity : BaseActivity() {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(AppColor.translucentBackground),
+                .background(AppColor.translucentBackground)
+                .clickable { onCancelClick() },
         ) {
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(20.dp, statusBarHeight + 20.dp, 20.dp, 0.dp)
+                    .clickable {  }
                     .weight(2F),
                 shape = RoundedCornerShape(18.dp),
             ) {
@@ -118,7 +122,7 @@ class EditBlockActivity : BaseActivity() {
                 ) {
                     PrimaryText(
                         modifier = Modifier.padding(top = 15.dp),
-                        text = viewStatesCombiner.title.collectAsState(initial = "").value,
+                        text = viewStatesCombiner.title.collectAsState("").value,
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp
                     )
@@ -190,7 +194,7 @@ class EditBlockActivity : BaseActivity() {
     }
 
     @Composable
-    fun ColumnScope.PageSelector(
+    fun PageSelector(
         pageList: List<EditBlockViewModel.NotionPage>,
         currentPage: EditBlockViewModel.NotionPage?,
         canEditPage: Boolean,
@@ -204,48 +208,48 @@ class EditBlockActivity : BaseActivity() {
             PrimaryText(text = getString(R.string.add_block_item_page_type))
             Spacer(modifier = Modifier.weight(1F))
 
-            if (currentPage == null) return
-
-            if (canEditPage) {
-                var pageTypeExpanded by remember { mutableStateOf(false) }
-                Column {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.clickable {
-                            pageTypeExpanded = true
+            if (currentPage != null) {
+                if (canEditPage) {
+                    var pageTypeExpanded by remember { mutableStateOf(false) }
+                    Column {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.clickable {
+                                pageTypeExpanded = true
+                            }
+                        ) {
+                            PrimaryText(text = currentPage.pageName)
+                            androidx.compose.material3.Icon(
+                                modifier = Modifier.padding(start = 3.dp),
+                                painter = rememberVectorPainter(image = Icons.Filled.ArrowDropDown),
+                                contentDescription = "Select other"
+                            )
                         }
-                    ) {
-                        PrimaryText(text = currentPage.pageName)
-                        androidx.compose.material3.Icon(
-                            modifier = Modifier.padding(start = 3.dp),
-                            painter = rememberVectorPainter(image = Icons.Filled.ArrowDropDown),
-                            contentDescription = "Select other"
-                        )
-                    }
-                    DropdownMenu(
-                        expanded = pageTypeExpanded,
-                        onDismissRequest = { pageTypeExpanded = false }) {
-                        pageList.forEach {
-                            DropdownMenuItem(onClick = {
-                                pageTypeExpanded = false
-                                onPageSelected(it)
-                            }) {
-                                PrimaryText(text = it.pageName)
+                        DropdownMenu(
+                            expanded = pageTypeExpanded,
+                            onDismissRequest = { pageTypeExpanded = false }) {
+                            pageList.forEach {
+                                DropdownMenuItem(onClick = {
+                                    pageTypeExpanded = false
+                                    onPageSelected(it)
+                                }) {
+                                    PrimaryText(text = it.pageName)
+                                }
                             }
                         }
                     }
+                } else {
+                    PrimaryText(
+                        modifier = Modifier.align(Alignment.CenterVertically),
+                        text = currentPage.pageName
+                    )
                 }
-            } else {
-                PrimaryText(
-                    modifier = Modifier.align(Alignment.CenterVertically),
-                    text = currentPage.pageName
-                )
             }
         }
     }
 
     @Composable
-    fun ColumnScope.BlockTypeSelector(
+    fun BlockTypeSelector(
         blockTypeList: Array<String>,
         currentBlockType: String?,
         onBlockTypeSelected: (blockType: String) -> Unit
@@ -258,32 +262,32 @@ class EditBlockActivity : BaseActivity() {
             PrimaryText(text = getString(R.string.add_block_item_block_type))
             Spacer(modifier = Modifier.weight(1F))
 
-            currentBlockType ?: return
-
-            var blockTypeExpanded by remember { mutableStateOf(false) }
-            Column {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.clickable {
-                        blockTypeExpanded = true
+            if (currentBlockType != null) {
+                var blockTypeExpanded by remember { mutableStateOf(false) }
+                Column {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.clickable {
+                            blockTypeExpanded = true
+                        }
+                    ) {
+                        PrimaryText(text = currentBlockType)
+                        androidx.compose.material3.Icon(
+                            modifier = Modifier.padding(start = 3.dp),
+                            painter = rememberVectorPainter(image = Icons.Filled.ArrowDropDown),
+                            contentDescription = "Select other content type"
+                        )
                     }
-                ) {
-                    PrimaryText(text = currentBlockType)
-                    androidx.compose.material3.Icon(
-                        modifier = Modifier.padding(start = 3.dp),
-                        painter = rememberVectorPainter(image = Icons.Filled.ArrowDropDown),
-                        contentDescription = "Select other content type"
-                    )
-                }
-                DropdownMenu(
-                    expanded = blockTypeExpanded,
-                    onDismissRequest = { blockTypeExpanded = false }) {
-                    blockTypeList.forEach {
-                        DropdownMenuItem(onClick = {
-                            blockTypeExpanded = false
-                            onBlockTypeSelected(it)
-                        }) {
-                            PrimaryText(text = it)
+                    DropdownMenu(
+                        expanded = blockTypeExpanded,
+                        onDismissRequest = { blockTypeExpanded = false }) {
+                        blockTypeList.forEach {
+                            DropdownMenuItem(onClick = {
+                                blockTypeExpanded = false
+                                onBlockTypeSelected(it)
+                            }) {
+                                PrimaryText(text = it)
+                            }
                         }
                     }
                 }
@@ -293,13 +297,13 @@ class EditBlockActivity : BaseActivity() {
 }
 
 class NotionBlockViewStatesCombiner(
-    val title: MutableSharedFlow<String> = MutableSharedFlow(),
-    val currentPage: MutableSharedFlow<EditBlockViewModel.NotionPage> = MutableSharedFlow(),
-    val pageList: MutableSharedFlow<List<EditBlockViewModel.NotionPage>> = MutableSharedFlow(),
-    val canEditPage: MutableSharedFlow<Boolean> = MutableSharedFlow(),
+    val title: MutableSharedFlow<String> = MutableSharedFlow(1),
+    val currentPage: MutableSharedFlow<EditBlockViewModel.NotionPage> = MutableSharedFlow(1),
+    val pageList: MutableSharedFlow<List<EditBlockViewModel.NotionPage>> = MutableSharedFlow(1),
+    val canEditPage: MutableSharedFlow<Boolean> = MutableSharedFlow(1),
     val blockTypeList: Array<String> = supportedEditType,
-    val currentBlockType: MutableSharedFlow<String> = MutableSharedFlow(),
-    val content: MutableSharedFlow<String> = MutableSharedFlow(),
-    val savingState: MutableSharedFlow<String> = MutableSharedFlow(),
-    val applyBlockState: MutableSharedFlow<Pair<Boolean, String>> = MutableSharedFlow(),
+    val currentBlockType: MutableSharedFlow<String> = MutableSharedFlow(1),
+    val content: MutableSharedFlow<String> = MutableSharedFlow(1),
+    val savingState: MutableSharedFlow<String> = MutableSharedFlow(1),
+    val applyBlockState: MutableSharedFlow<Pair<Boolean, String>> = MutableSharedFlow(1),
 )

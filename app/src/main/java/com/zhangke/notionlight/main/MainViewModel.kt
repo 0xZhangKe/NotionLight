@@ -80,7 +80,7 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             blockFlow?.emit(DataWithLoading.loading(blockFlow.value.data))
             val blockList = NotionRepo.queryAllBlocks(pageId)
-            NotionPageConfigRepo.insetBlocks(pageId, blockList)
+            NotionPageConfigRepo.insetOrUpdateBlocks(pageId, blockList)
         }
     }
 
@@ -113,7 +113,7 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun isBlockSupportEdit(block: NotionBlock): Boolean {
+    fun isBlockEditable(block: NotionBlock): Boolean {
         return supportedEditType.contains(block.type)
     }
 
@@ -121,7 +121,7 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             val blockList = NotionRepo.queryAllBlocks(pageId)
             NotionPageConfigRepo.deletePageAllBlock(pageId)
-            NotionPageConfigRepo.insetBlocks(pageId, blockList)
+            NotionPageConfigRepo.insetOrUpdateBlocks(pageId, blockList)
         }
     }
 }
