@@ -26,6 +26,7 @@ import com.zhangke.architect.activity.BaseActivity
 import com.zhangke.architect.coroutines.collectWithLifecycle
 import com.zhangke.architect.theme.AppMaterialTheme
 import com.zhangke.architect.theme.PrimaryText
+import com.zhangke.architect.theme.SecondaryText
 import com.zhangke.framework.utils.StatusBarUtils
 import com.zhangke.framework.utils.toast
 import com.zhangke.notionlight.R
@@ -113,8 +114,7 @@ class EditBlockActivity : BaseActivity() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(20.dp, statusBarHeight + 20.dp, 20.dp, 0.dp)
-                    .clickable {  }
-                    .weight(2F),
+                    .clickable { },
                 shape = RoundedCornerShape(18.dp),
             ) {
                 Column(
@@ -152,7 +152,17 @@ class EditBlockActivity : BaseActivity() {
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(20.dp, 20.dp, 20.dp, 20.dp),
+                            .heightIn(min = 200.dp, max = 500.dp)
+                            .padding(start = 20.dp, top = 15.dp, end = 20.dp),
+                    )
+
+                    val savingState =
+                        viewStatesCombiner.savingState.collectAsState(initial = "").value
+                    SecondaryText(
+                        modifier = Modifier
+                            .padding(top = 10.dp, start = 20.dp, bottom = 20.dp),
+                        fontSize = 14.sp,
+                        text = savingState
                     )
                 }
             }

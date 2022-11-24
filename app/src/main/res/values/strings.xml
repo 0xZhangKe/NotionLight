@@ -63,6 +63,10 @@
 
     <string name="setting_page_manager_subtitle">新增或移除页面</string>
 
+    <string name="setting_draft_box">草稿箱</string>
+
+    <string name="setting_draft_box_subtitle">自动保存下来的草稿</string>
+
     <string name="setting_page_day_night">深色模式</string>
 
     <string name="setting_page_day_night_day">浅色模式</string>

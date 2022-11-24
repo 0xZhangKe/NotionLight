@@ -1,15 +1,6 @@
 package com.zhangke.notionlight.draft.db
 
-import androidx.room.Dao
-import androidx.room.Database
-import androidx.room.Delete
-import androidx.room.Entity
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.PrimaryKey
-import androidx.room.Query
-import androidx.room.Room
-import androidx.room.RoomDatabase
+import androidx.room.*
 import com.zhangke.framework.utils.appContext
 import kotlinx.coroutines.flow.Flow
 
@@ -23,7 +14,8 @@ data class DraftEntry(
     @PrimaryKey val draftId: Long,
     val content: String,
     val pageId: String,
-    val blockType: String
+    val blockType: String,
+    val date: String
 )
 
 @Dao
@@ -40,6 +32,9 @@ interface DraftBoxDao {
 
     @Query("DELETE FROM $DRAFT_TABLE_NAME WHERE draftId=:draftId")
     suspend fun deleteByDraftId(draftId: Long)
+
+    @Query("DELETE FROM $DRAFT_TABLE_NAME")
+    suspend fun nukeTable()
 }
 
 @Database(entities = [DraftEntry::class], version = DB_VERSION)

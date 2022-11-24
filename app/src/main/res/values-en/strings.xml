@@ -63,6 +63,10 @@
 
     <string name="setting_page_manager_subtitle">Add or remove pages</string>
 
+    <string name="setting_draft_box">Draft Box</string>
+
+    <string name="setting_draft_box_subtitle">Auto saved draft</string>
+
     <string name="setting_page_day_night">Dark Mode</string>
 
     <string name="setting_page_day_night_day">Light mode</string>

@@ -16,12 +16,16 @@ object DraftBoxManager {
         return draftDao.queryById(draftId)
     }
 
-    suspend fun saveDraft(id: Long, pageId: String, blockType: String, content: String) {
-        draftDao.insert(DraftEntry(id, pageId = pageId, blockType = blockType, content = content))
+    suspend fun saveDraft(id: Long, pageId: String, blockType: String, content: String, date: String) {
+        draftDao.insert(DraftEntry(id, pageId = pageId, blockType = blockType, content = content, date = date))
     }
 
     suspend fun deleteDraft(draftId: Long) {
         draftDao.deleteByDraftId(draftId)
+    }
+
+    suspend fun clearDraftBox(){
+        draftDao.nukeTable()
     }
 
     fun collectAllDraft(): Flow<List<DraftEntry>> {

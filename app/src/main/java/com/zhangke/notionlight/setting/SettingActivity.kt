@@ -37,6 +37,8 @@ import com.zhangke.architect.activity.BaseActivity
 import com.zhangke.architect.theme.*
 import com.zhangke.notionlight.R
 import com.zhangke.notionlight.code.OpenSourceActivity
+import com.zhangke.notionlight.draft.DraftBoxActivity
+import com.zhangke.notionlight.draft.DraftBoxManager
 import com.zhangke.notionlight.pagemanager.PageManagerActivity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -154,7 +156,17 @@ class SettingActivity : BaseActivity() {
                     iconResId = R.drawable.ic_page_manager,
                     iconPadding = 3.dp,
                     title = getString(R.string.setting_page_manager),
-                    subtitle = getString(R.string.setting_page_manager),
+                    subtitle = getString(R.string.setting_page_manager_subtitle),
+                )
+
+                CreateSettingLine(
+                    modifier = Modifier.clickable {
+                        DraftBoxActivity.open(this@SettingActivity)
+                    },
+                    iconResId = R.drawable.ic_baseline_drafts_24,
+                    iconPadding = 3.dp,
+                    title = getString(R.string.setting_draft_box),
+                    subtitle = getString(R.string.setting_draft_box_subtitle),
                 )
 
                 var dayNightModeMenuExpanded by remember { mutableStateOf(false) }

@@ -2,9 +2,9 @@ package com.zhangke.notionlight.editblock
 
 import android.content.Intent
 import android.widget.Toast
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.zhangke.architect.coroutines.ApplicationScope
 import com.zhangke.framework.utils.appContext
 import com.zhangke.framework.utils.toast
 import com.zhangke.notionlib.NotionRepo
@@ -12,7 +12,6 @@ import com.zhangke.notionlib.data.NotionBlock
 import com.zhangke.notionlib.data.block.BlockType
 import com.zhangke.notionlib.ext.getLightText
 import com.zhangke.notionlight.R
-import com.zhangke.notionlight.editblock.NotionPageSyncHelper
 import com.zhangke.notionlight.config.NotionBlockInPage
 import com.zhangke.notionlight.config.NotionPageConfig
 import com.zhangke.notionlight.config.NotionPageConfigRepo
@@ -28,6 +27,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.concurrent.getOrSet
 import kotlin.properties.Delegates
 
 class EditBlockViewModel : ViewModel() {
@@ -40,8 +40,6 @@ class EditBlockViewModel : ViewModel() {
 
     private var currentDraftId by Delegates.notNull<Long>()
     private var blockId: String? = null
-
-    var block = MutableLiveData<NotionBlock?>()
 
     init {
         initSharedData()
@@ -203,11 +201,6 @@ class EditBlockViewModel : ViewModel() {
         saveDraft()
     }
 
-    private fun getCurrentTime(): String {
-        val format = SimpleDateFormat("HH:mm:ss", Locale.ROOT)
-        return format.format(Date())
-    }
-
     fun onPageSelected(newPage: NotionPage) {
         viewStatesCombiner.currentPage.tryEmit(newPage)
         saveDraft()
@@ -221,12 +214,26 @@ class EditBlockViewModel : ViewModel() {
     private fun saveDraft() {
         viewModelScope.launch {
             viewStatesCombiner.savingState.emit("Saving...")
-            val content = viewStatesCombiner.content.first().orEmpty()
+            val content = viewStatesCombiner.content.first()
             val currentPageId = viewStatesCombiner.currentPage.first().pageId
             val currentBlockType = viewStatesCombiner.currentBlockType.first()
-            DraftBoxManager.saveDraft(currentDraftId, currentPageId, currentBlockType, content)
-            viewStatesCombiner.savingState.emit("Draft saved on ${getCurrentTime()}")
+            val currentTime = getCurrentTime()
+            DraftBoxManager.saveDraft(
+                currentDraftId,
+                currentPageId,
+                currentBlockType,
+                content,
+                currentTime
+            )
+            viewStatesCombiner.savingState.emit("Draft saved on $currentTime")
         }
+    }
+
+    private val dateFormatLocal = ThreadLocal<SimpleDateFormat>()
+
+    private fun getCurrentTime(): String {
+        val format = dateFormatLocal.getOrSet { SimpleDateFormat("HH:mm:ss", Locale.ROOT) }
+        return format.format(Date())
     }
 
     fun onConfirm() {
@@ -272,6 +279,16 @@ class EditBlockViewModel : ViewModel() {
 
     private suspend fun deleteDraft() {
         DraftBoxManager.deleteDraft(currentDraftId)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        ApplicationScope.launch {
+            val content = viewStatesCombiner.content.firstOrNull()
+            if (content.isNullOrBlank()) {
+                deleteDraft()
+            }
+        }
     }
 
     class NotionPage(
