@@ -44,6 +44,14 @@ android {
         kotlinCompilerExtensionVersion = rootProject.ext.compose_version
         kotlinCompilerVersion = rootProject.ext.kotlin_version
     }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            def flavor = variant.name
+            def versionName = variant.versionName
+            outputFileName = "notionlight_${flavor}_${versionName}.apk"
+        }
+    }
 }
 
 dependencies {
