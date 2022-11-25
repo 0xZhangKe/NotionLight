@@ -119,6 +119,8 @@
 
     <string name="draft_not_found">draft not found!</string>
 
+    <string name="draft_page_title">Draft Box</string>
+
     <string name="get_notion_page_error">Get page info error!</string>
 
     <string name="draft_clear_dialog_title">Are you sure to empty the Drafts?</string>

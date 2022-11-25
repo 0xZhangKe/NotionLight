@@ -121,5 +121,7 @@
 
     <string name="get_notion_page_error">页面信息获取失败!</string>
 
+    <string name="draft_page_title">草稿箱</string>
+
     <string name="draft_clear_dialog_title">确定清空草稿箱？</string>
 </resources>

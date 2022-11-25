@@ -70,7 +70,7 @@ class DraftBoxActivity : AppCompatActivity() {
         Scaffold(
             topBar = {
                 Toolbar(
-                    title = getString(R.string.add_page_title),
+                    title = getString(R.string.draft_page_title),
                     navigationBackClick = {
                         finish()
                     },
