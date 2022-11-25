@@ -25,6 +25,12 @@ class DraftBoxViewModel : ViewModel() {
         }
     }
 
+    fun deleteDraft(draft: DraftEntry) {
+        viewModelScope.launch {
+            DraftBoxManager.deleteDraft(draft.draftId)
+        }
+    }
+
     fun clearDraftBox() {
         viewModelScope.launch {
             DraftBoxManager.clearDraftBox()

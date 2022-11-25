@@ -7,6 +7,10 @@
 
     <string name="copy">Copy</string>
 
+    <string name="delete">Delete</string>
+
+    <string name="edit">Edit</string>
+
     <string name="error_app_market_not_found">Application market not found</string>
 
     <string name="add_page_guid">No content available, please add.</string>
@@ -14,10 +18,6 @@
     <string name="add_page_title">Add page</string>
 
     <string name="page_add_success">Added successfully</string>
-
-    <string name="block_dialog_edit">Edit</string>
-
-    <string name="block_dialog_remove">Delete</string>
 
     <string name="block_dialog_open_in_notion">Open in Notion</string>
 
@@ -120,4 +120,6 @@
     <string name="draft_not_found">draft not found!</string>
 
     <string name="get_notion_page_error">Get page info error!</string>
+
+    <string name="draft_clear_dialog_title">Are you sure to empty the Drafts?</string>
 </resources>

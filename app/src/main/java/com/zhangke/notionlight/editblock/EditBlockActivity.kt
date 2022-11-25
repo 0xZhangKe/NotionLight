@@ -152,7 +152,7 @@ class EditBlockActivity : BaseActivity() {
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .heightIn(min = 200.dp, max = 500.dp)
+                            .heightIn(min = 170.dp, max = 500.dp)
                             .padding(start = 20.dp, top = 15.dp, end = 20.dp),
                     )
 

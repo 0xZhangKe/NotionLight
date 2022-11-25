@@ -194,7 +194,7 @@ class PageFragment : Fragment() {
                     ) {
                         PrimaryText(
                             modifier = Modifier.padding(13.dp, 13.dp, 13.dp, 13.dp),
-                            text = getString(R.string.block_dialog_edit)
+                            text = getString(R.string.edit)
                         )
                     }
                 }
@@ -210,7 +210,7 @@ class PageFragment : Fragment() {
                 ) {
                     PrimaryText(
                         modifier = Modifier.padding(13.dp, 13.dp, 13.dp, 13.dp),
-                        text = getString(R.string.block_dialog_remove)
+                        text = getString(R.string.delete)
                     )
                 }
             }
