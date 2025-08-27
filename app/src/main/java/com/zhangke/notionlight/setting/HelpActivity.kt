@@ -73,9 +73,9 @@ class HelpActivity : BaseActivity() {
                 factory = { context ->
                     TextView(context).apply {
                         val color = if (DayNightHelper.isNight()) {
-                            resources.getColor(R.color.text_color_primary_night)
+                            resources.getColor(com.zhangke.framework.R.color.text_color_primary_night)
                         } else {
-                            resources.getColor(R.color.text_color_primary_day)
+                            resources.getColor(com.zhangke.framework.R.color.text_color_primary_day)
                         }
                         setTextColor(color)
                     }

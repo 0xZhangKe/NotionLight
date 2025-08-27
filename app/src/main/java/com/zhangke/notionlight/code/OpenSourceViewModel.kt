@@ -28,7 +28,7 @@ class OpenSourceViewModel : ViewModel() {
     private fun buildThisProjectInfo(): ThisProjectOpenSourceInfo {
         return ThisProjectOpenSourceInfo(
             icon = AppCompatResources.getDrawable(appContext, R.mipmap.ic_launcher)
-                ?: ColorDrawable(appContext.resources.getColor(R.color.primary_day)),
+                ?: ColorDrawable(appContext.resources.getColor(com.zhangke.framework.R.color.primary_day)),
             name = appContext.getString(R.string.app_name),
             author = "ZhangKe",
             license = "The Apache Software License, Version 2.0",

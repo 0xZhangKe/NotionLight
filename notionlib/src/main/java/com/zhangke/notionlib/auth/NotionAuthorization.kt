@@ -83,6 +83,11 @@ object NotionAuthorization {
     }
 
     private fun buildAuthUrl(): String {
+        //https://api.notion.com/v1/oauth/authorize?
+        // client_id=330ab979-eb7f-4e33-ba6a-4a0948e5c085
+        // &response_type=code
+        // &owner=user
+        // &redirect_uri=https%3A%2F%2F0xzhangke.github.io%2Fnotion_light_oauth_result.html
         val authUrlBuilder = StringBuilder()
         authUrlBuilder.append("https://api.notion.com/v1/oauth/authorize")
         authUrlBuilder.append("?owner=user")
