@@ -17,8 +17,8 @@ android {
         applicationId "com.zhangke.notionlight"
         minSdk rootProject.ext.minSdkVersion
         targetSdk rootProject.ext.targetSdkVersion
-        versionCode 11010
-        versionName "1.1.1"
+        versionCode 12000
+        versionName "1.2.0"
         multiDexEnabled = true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
